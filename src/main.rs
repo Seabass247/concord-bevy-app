@@ -6,7 +6,7 @@ use dolly::prelude::{CameraRig, Position, Smooth, YawPitch};
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
-            title: "Bevy Kajiya Playground".to_string(),
+            title: "Concord Prototype".to_string(),
             width: 1920.,
             height: 1080.,
             vsync: false,
