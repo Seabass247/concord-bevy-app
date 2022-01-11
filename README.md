@@ -1,15 +1,24 @@
 <div align="center">
 
-# ☀️ bevy-kajiya playground
+# 🌳 concord-bevy-app
 
-**A example bevy application using bevy-kajiya for its renderer**
+**An experimental bevy app that achieves to support run-time level editing and content creation**
 </div>
 
 NOTE: only tested on Windows.
 
 For more context, check out the [bevy-kajiya repo](https://github.com/Seabass247/bevy-kajiya). 
 
-This bevy app demonstrates basic usage of the `bevy-kajiya` crate and the mesh and scene system used by `kajiya`.
+This bevy app uses the most advanced Rust renderer open-sourced yet, as of writing.
+
+### Future Goals
+- [x] Editor gui
+- [x] Transform edit tools
+- [x] In-game debugging/info console
+- [ ] Scene persistence via saving/loading and standardized file format
+- [ ] Hot mesh asset reloading
+- [ ] Netorking
+- [ ] Scripting
 
 ![alt text](https://github.com/Seabass247/bevy-kajiya-playground/blob/main/screenshot.png)
 
