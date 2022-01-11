@@ -3,6 +3,16 @@
 version = 3
 
 [[package]]
+name = "ab_glyph"
+version = "0.2.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61caed9aec6daeee1ea38ccf5fb225e4f96c1eeead1b4a5c267324a63cf02326"
+dependencies = [
+ "ab_glyph_rasterizer",
+ "owned_ttf_parser 0.14.0",
+]
+
+[[package]]
 name = "ab_glyph_rasterizer"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -141,6 +151,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ash-egui"
+version = "0.1.0"
+dependencies = [
+ "arrayvec 0.5.2",
+ "ash 0.33.3+1.2.191",
+ "bytemuck",
+ "egui",
+ "memoffset",
+]
+
+[[package]]
 name = "ash-window"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -267,6 +288,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "065374052e7df7ee4047b1160cca5e1467a12351a40b3da123c870ba0b8eda2a"
 
 [[package]]
+name = "atomic_refcell"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73b5e5f48b927f04e952dedc932f31995a65a0bf65ec971c74436e51bf6e970d"
+
+[[package]]
 name = "atty"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -336,6 +363,8 @@ name = "bevy-kajiya"
 version = "0.1.0"
 dependencies = [
  "bevy_kajiya_core",
+ "bevy_kajiya_editor",
+ "bevy_kajiya_egui",
  "bevy_kajiya_render",
 ]
 
@@ -528,7 +557,39 @@ name = "bevy_kajiya_core"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_kajiya_editor",
+ "bevy_kajiya_egui",
  "bevy_kajiya_render",
+]
+
+[[package]]
+name = "bevy_kajiya_editor"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "bevy_kajiya_egui",
+ "bevy_kajiya_logger",
+ "bevy_kajiya_render",
+ "egui-gizmo",
+ "kajiya",
+]
+
+[[package]]
+name = "bevy_kajiya_egui"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "bevy_kajiya_logger",
+ "bevy_kajiya_render",
+ "kajiya",
+ "kajiya-egui",
+]
+
+[[package]]
+name = "bevy_kajiya_logger"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
 ]
 
 [[package]]
@@ -537,6 +598,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bevy",
+ "bevy_kajiya_logger",
  "glam 0.18.0",
  "imgui",
  "kajiya",
@@ -1407,6 +1469,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1dd4afd79212583ff429b913ad6605242ed7eec277e950b1438f300748f948f4"
 
 [[package]]
+name = "egui"
+version = "0.16.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c733356eb5f1139fdeedc370c00e9ea689c5d9120502c43925285bc7249a333"
+dependencies = [
+ "ahash",
+ "epaint",
+ "nohash-hasher",
+]
+
+[[package]]
+name = "egui-gizmo"
+version = "0.4.1"
+dependencies = [
+ "egui",
+ "glam 0.19.0",
+]
+
+[[package]]
+name = "emath"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "55673de2eb96660dde25ba7b2d36a7054beead1a2bec74dcfd5eb05a1e1ba76d"
+
+[[package]]
 name = "env_logger"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1414,6 +1501,19 @@ checksum = "a19187fea3ac7e84da7dacf48de0c45d63c6a76f9490dae389aead16c243fce3"
 dependencies = [
  "log",
  "regex",
+]
+
+[[package]]
+name = "epaint"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adfd9296f7f92902e41c0e8e5deca6d2fb29f289c86d03a01ea01bd7498316c2"
+dependencies = [
+ "ab_glyph",
+ "ahash",
+ "atomic_refcell",
+ "emath",
+ "nohash-hasher",
 ]
 
 [[package]]
@@ -1697,6 +1797,12 @@ dependencies = [
  "num-traits",
  "serde",
 ]
+
+[[package]]
+name = "glam"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b8509e6791516e81c1a630d0bd7fbac36d2fa8712a9da8662e716b52d5051ca"
 
 [[package]]
 name = "glam"
@@ -2087,6 +2193,17 @@ dependencies = [
  "smol",
  "turbosloth",
  "vk-sync",
+]
+
+[[package]]
+name = "kajiya-egui"
+version = "0.1.0"
+dependencies = [
+ "ash-egui",
+ "kajiya",
+ "log",
+ "parking_lot",
+ "winit 0.25.0",
 ]
 
 [[package]]
@@ -2525,6 +2642,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "nohash-hasher"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2bf50223579dc7cdcfb3bfcacf7069ff68243f8c363f62ffa99cf000a6b9c451"
+
+[[package]]
 name = "nom"
 version = "7.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2685,7 +2808,16 @@ version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f923fb806c46266c02ab4a5b239735c144bdeda724a50ed058e5226f594cde3"
 dependencies = [
- "ttf-parser",
+ "ttf-parser 0.6.2",
+]
+
+[[package]]
+name = "owned_ttf_parser"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ef05f2882a8b3e7acc10c153ade2631f7bfc8ce00d2bf3fb8f4e9d2ae6ea5c3"
+dependencies = [
+ "ttf-parser 0.14.0",
 ]
 
 [[package]]
@@ -3083,7 +3215,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc7c727aded0be18c5b80c1640eae0ac8e396abf6fa8477d96cb37d18ee5ec59"
 dependencies = [
  "ab_glyph_rasterizer",
- "owned_ttf_parser",
+ "owned_ttf_parser 0.6.0",
 ]
 
 [[package]]
@@ -3533,6 +3665,12 @@ name = "ttf-parser"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3e5d7cd7ab3e47dda6e56542f4bbf3824c15234958c6e1bd6aaa347e93499fdc"
+
+[[package]]
+name = "ttf-parser"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ccbe8381883510b6a2d8f1e32905bddd178c11caef8083086d0c0c9ab0ac281"
 
 [[package]]
 name = "turbosloth"
