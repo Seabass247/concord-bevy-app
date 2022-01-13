@@ -1,6 +1,6 @@
 use bevy::{prelude::*, transform, math::vec3};
-use bevy_kajiya_logger::console_info;
-use bevy_kajiya_render::KajiyaMeshInstance;
+use concord_logger::console_info;
+use bevy_kajiya::kajiya_render::KajiyaMeshInstance;
 
 use crate::EditorState;
 

@@ -5,4 +5,14 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace]
+members = [
+    "concord_core",
+    "concord_editor",
+    "concord_logger",
+]
+
 [dependencies]
+concord_core = { path = "concord_core" }
+concord_editor = { path = "concord_editor" }
+concord_logger = { path = "concord_logger" }

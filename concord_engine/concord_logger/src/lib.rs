@@ -14,7 +14,7 @@ macro_rules! console_info {
     () => (println!(""));
     ($($arg:tt)+) => {
         println!("[INFO] {}", format!($($arg)+));
-        bevy_kajiya_logger::push_console_log(format!("[INFO] {}", format!($($arg)+)))
+        concord_logger::push_console_log(format!("[INFO] {}", format!($($arg)+)))
     };
 }
 

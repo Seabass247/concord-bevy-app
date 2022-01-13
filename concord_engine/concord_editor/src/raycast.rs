@@ -1,8 +1,9 @@
 use bevy::{math::Vec3A, prelude::*, reflect::erased_serde::private::serde::__private::de};
 
-use bevy_kajiya_egui::{egui::{Color32, Ui}, EguiContext};
-use bevy_kajiya_logger::console_info;
-use bevy_kajiya_render::{camera::KajiyaCamera, mesh::Aabb, KajiyaMeshInstance};
+use bevy_kajiya::kajiya_render::mesh::Aabb;
+use bevy_kajiya::kajiya_egui::{egui::{Color32, Ui}, EguiContext};
+use concord_logger::console_info;
+use bevy_kajiya::kajiya_render::{camera::KajiyaCamera, KajiyaMeshInstance};
 use egui_gizmo::{Ray, math};
 
 use crate::{EditorState, target::{select_new_target, update_target_transform, TargetTag, unset_entity_target}};

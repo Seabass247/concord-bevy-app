@@ -1,25 +1,25 @@
 use crate::raycast::{RayCast, pick_meshes};
 use crate::{EditorState};
 use bevy::prelude::*;
-use bevy_kajiya_egui::egui::{LayerId, ScrollArea, Slider};
-use bevy_kajiya_egui::{egui, EguiContext};
-use bevy_kajiya_logger::{console_info, get_console_logs};
-use bevy_kajiya_render::camera::ExtractedCamera;
-use bevy_kajiya_render::plugin::{KajiyaRenderStage, KajiyaRenderApp};
-use bevy_kajiya_render::{KajiyaMeshInstance, KajiyaCamera};
+use bevy_kajiya::egui::{LayerId, ScrollArea, Slider};
+use bevy_kajiya::kajiya_egui::{egui, EguiContext};
+use concord_logger::{console_info, get_console_logs};
+use bevy_kajiya::kajiya_render::camera::ExtractedCamera;
+use bevy_kajiya::kajiya_render::plugin::{KajiyaRenderStage, KajiyaRenderApp, RenderWorld};
+use bevy_kajiya::kajiya_render::{KajiyaMeshInstance, KajiyaCamera};
 use egui_gizmo::{GizmoMode, Ray};
 use kajiya::camera::{CameraBodyMatrices, IntoCameraBodyMatrices};
 use crate::target::{Target, update_target_transform, TargetTag};
 
 #[derive(Default)]
-pub struct KajiyaEditorPlugin;
+pub struct ConcordEditorPlugin;
 
-impl Plugin for KajiyaEditorPlugin {
+impl Plugin for ConcordEditorPlugin {
     fn build(&self, app: &mut App) {
         let editor_state = EditorState::default();
         app.insert_resource(editor_state);
-        app.add_system(update_target_transform);
         app.add_system(process_input);
+        app.add_system(update_target_transform);
         app.add_system(pick_meshes);
         app.sub_app_mut(KajiyaRenderApp)
             .add_system_to_stage(KajiyaRenderStage::Extract, update_transform_gizmo)
@@ -155,7 +155,7 @@ pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
 
 pub fn update_transform_gizmo(
     mut editor: ResMut<EditorState>,
-    render_world: Res<bevy_kajiya_render::plugin::RenderWorld>,
+    render_world: Res<RenderWorld>,
     query: Query<&GlobalTransform, With<TargetTag>>,
 ) {
     let extracted_camera = render_world.get_resource::<ExtractedCamera>().unwrap();

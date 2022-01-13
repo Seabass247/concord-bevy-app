@@ -1,5 +1,5 @@
 [package]
-name = "bevy_kajiya_editor"
+name = "concord_editor"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,6 +9,5 @@ edition = "2021"
 bevy = { version = "0.6.0", default-features = false, features = ["bevy_winit"] }
 kajiya = { path = "../../kajiya/crates/lib/kajiya" }
 egui-gizmo = { path = "../../egui-gizmo" }
-bevy_kajiya_egui = { path = "../bevy_kajiya_egui" }
-bevy_kajiya_render = { path = "../bevy_kajiya_render" }
-bevy_kajiya_logger = { path = "../bevy_kajiya_logger" }
+bevy-kajiya = { path = "../../bevy-kajiya"}
+concord_logger = { path = "../concord_logger" }

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_kajiya_egui::egui::Color32;
+use bevy_kajiya::kajiya_egui::egui::Color32;
 use egui_gizmo::{Gizmo, GizmoMode, GizmoOrientation, GizmoResult, GizmoVisuals};
 use raycast::RayCast;
 
