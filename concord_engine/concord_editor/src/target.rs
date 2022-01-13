@@ -1,6 +1,6 @@
-use bevy::{prelude::*, transform, math::vec3};
-use concord_logger::console_info;
+use bevy::prelude::*;
 use bevy_kajiya::kajiya_render::KajiyaMeshInstance;
+use concord_logger::console_info;
 
 use crate::EditorState;
 
@@ -14,7 +14,12 @@ pub struct Target {
     pub orientation: Quat,
 }
 
-pub fn select_new_target(commands: &mut Commands, editor: &mut EditorState, transform: &GlobalTransform, entity: Entity) {
+pub fn select_new_target(
+    commands: &mut Commands,
+    editor: &mut EditorState,
+    transform: &GlobalTransform,
+    entity: Entity,
+) {
     let new_target = Target {
         entity: Some(entity),
         origin: transform.translation,
@@ -31,7 +36,12 @@ pub fn select_new_target(commands: &mut Commands, editor: &mut EditorState, tran
     }
 }
 
-fn set_entity_target(commands: &mut Commands, editor: &mut EditorState, entity: Entity, new_target: Target) {
+fn set_entity_target(
+    commands: &mut Commands,
+    editor: &mut EditorState,
+    entity: Entity,
+    new_target: Target,
+) {
     commands.entity(entity).insert(TargetTag);
     editor.selected_target = Some(new_target);
     // console_info!("Selected entity");
@@ -39,7 +49,9 @@ fn set_entity_target(commands: &mut Commands, editor: &mut EditorState, entity: 
 
 pub fn unset_entity_target(commands: &mut Commands, editor: &mut EditorState) {
     if let Some(target) = editor.selected_target {
-        commands.entity(target.entity.unwrap()).remove::<TargetTag>();
+        commands
+            .entity(target.entity.unwrap())
+            .remove::<TargetTag>();
         editor.selected_target = None;
         // console_info!("Deselect entity");
     }
@@ -103,7 +115,6 @@ pub fn update_target_transform(
                     egui_gizmo::GizmoMode::Scale => {}
                 }
             }
-
         }
     }
 }

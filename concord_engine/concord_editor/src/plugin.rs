@@ -1,15 +1,20 @@
-use crate::raycast::{RayCast, pick_meshes};
-use crate::{EditorState};
+use crate::{
+    raycast::{pick_meshes, RayCast},
+    target::{update_target_transform, TargetTag},
+    EditorState,
+};
 use bevy::prelude::*;
-use bevy_kajiya::egui::{LayerId, ScrollArea, Slider};
-use bevy_kajiya::kajiya_egui::{egui, EguiContext};
+use bevy_kajiya::{
+    egui::{LayerId, ScrollArea, Slider},
+    kajiya_egui::{egui, EguiContext},
+    kajiya_render::{
+        camera::ExtractedCamera,
+        plugin::{KajiyaRenderApp, KajiyaRenderStage, RenderWorld},
+        KajiyaCamera,
+    },
+};
 use concord_logger::{console_info, get_console_logs};
-use bevy_kajiya::kajiya_render::camera::ExtractedCamera;
-use bevy_kajiya::kajiya_render::plugin::{KajiyaRenderStage, KajiyaRenderApp, RenderWorld};
-use bevy_kajiya::kajiya_render::{KajiyaMeshInstance, KajiyaCamera};
-use egui_gizmo::{GizmoMode, Ray};
-use kajiya::camera::{CameraBodyMatrices, IntoCameraBodyMatrices};
-use crate::target::{Target, update_target_transform, TargetTag};
+use egui_gizmo::GizmoMode;
 
 #[derive(Default)]
 pub struct ConcordEditorPlugin;
@@ -110,7 +115,6 @@ pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
             }
             ui.add(egui::TextEdit::singleline(&mut translation_str).interactive(false));
             ui.add(egui::TextEdit::singleline(&mut rotation_str).interactive(false));
-    
         });
 
     egui::TopBottomPanel::bottom("bottom_panel")
@@ -137,17 +141,17 @@ pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
 
     if editor.selected_target.is_some() {
         egui::Area::new("viewport")
-        .fixed_pos((0.0, 0.0))
-        .show(&egui.egui, |ui| {
-            ui.with_layer_id(LayerId::background(), |ui| {
-                let (last_response, ray) = editor.transform_gizmo.gizmo().interact(ui);
-                if let Some(ray) = ray {
-                    editor.last_ray_cast = RayCast::from_ray(ray);
-                }
+            .fixed_pos((0.0, 0.0))
+            .show(&egui.egui, |ui| {
+                ui.with_layer_id(LayerId::background(), |ui| {
+                    let (last_response, ray) = editor.transform_gizmo.gizmo().interact(ui);
+                    if let Some(ray) = ray {
+                        editor.last_ray_cast = RayCast::with_ray(ray);
+                    }
 
-                editor.transform_gizmo.last_response = last_response;
+                    editor.transform_gizmo.last_response = last_response;
+                });
             });
-        });        
     } else {
         editor.transform_gizmo.last_response = None;
     }

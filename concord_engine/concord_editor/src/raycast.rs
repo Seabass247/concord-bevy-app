@@ -1,12 +1,12 @@
-use bevy::{math::Vec3A, prelude::*, reflect::erased_serde::private::serde::__private::de};
+use bevy::{math::Vec3A, prelude::*};
 
-use bevy_kajiya::kajiya_render::mesh::Aabb;
-use bevy_kajiya::kajiya_egui::{egui::{Color32, Ui}, EguiContext};
-use concord_logger::console_info;
-use bevy_kajiya::kajiya_render::{camera::KajiyaCamera, KajiyaMeshInstance};
-use egui_gizmo::{Ray, math};
+use bevy_kajiya::kajiya_render::{mesh::Aabb, KajiyaMeshInstance};
+use egui_gizmo::{math, Ray};
 
-use crate::{EditorState, target::{select_new_target, update_target_transform, TargetTag, unset_entity_target}};
+use crate::{
+    target::{select_new_target, TargetTag},
+    EditorState,
+};
 
 /// A 3D ray, with an origin and direction. The direction is guaranteed to be normalized.
 #[derive(Debug, Copy, Clone)]
@@ -16,7 +16,12 @@ pub struct RayCast {
 
 impl Default for RayCast {
     fn default() -> Self {
-        Self { ray: Ray { origin: math::Vec3::ZERO, direction: math::Vec3::ZERO } }
+        Self {
+            ray: Ray {
+                origin: math::Vec3::ZERO,
+                direction: math::Vec3::ZERO,
+            },
+        }
     }
 }
 
@@ -25,27 +30,16 @@ pub struct SelectableTag;
 
 impl RayCast {
     /// Constructs a `RayCast`, normalizing the direction vector.
-    pub fn new(origin: [f32; 3], direction: [f32; 3]) -> Self {
-        let direction: math::Vec3 = direction.into();
-        let direction = direction.normalize();
-        Self {
-            ray: Ray { origin: origin.into(), direction },
-        }
-    }
-
-    /// Constructs a `RayCast`, normalizing the direction vector.
-    pub fn from_ray(ray: Ray) -> Self {
-        Self {
-            ray,
-        }
+    pub fn with_ray(ray: Ray) -> Self {
+        Self { ray }
     }
 
     /// Checks if the ray intersects with an AABB of a mesh.
     pub fn intersects_aabb(&self, aabb: &Aabb, model_to_world: &Mat4) -> Option<[f32; 2]> {
         // Transform the ray to model space
         let world_to_model = model_to_world.inverse();
-        let ray_dir: [f32;3] = self.ray.direction().into();
-        let ray_origin: [f32;3] = self.ray.origin().into();
+        let ray_dir: [f32; 3] = self.ray.direction().into();
+        let ray_origin: [f32; 3] = self.ray.origin().into();
         let ray_dir: Vec3A = world_to_model.transform_vector3(ray_dir.into()).into();
         let ray_origin: Vec3A = world_to_model.transform_point3(ray_origin.into()).into();
         // Check if the ray intersects the mesh's AABB. It's useful to work in model space because
@@ -88,18 +82,22 @@ pub fn pick_meshes(
     mut commands: Commands,
     buttons: Res<Input<MouseButton>>,
     mut editor: ResMut<EditorState>,
-    query: Query<(Entity, &GlobalTransform, &KajiyaMeshInstance), (With<SelectableTag>, Without<TargetTag>)>,
+    query: Query<
+        (Entity, &GlobalTransform, &KajiyaMeshInstance),
+        (With<SelectableTag>, Without<TargetTag>),
+    >,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
         for (entity, mesh_transform, _mesh) in query.iter() {
             let mesh_aabb = Aabb::from_center_padding(Vec3::ZERO, 1.0);
-            if let Some([_, far]) =
-                editor.last_ray_cast.intersects_aabb(&mesh_aabb, &mesh_transform.compute_matrix())
+            if let Some([_, far]) = editor
+                .last_ray_cast
+                .intersects_aabb(&mesh_aabb, &mesh_transform.compute_matrix())
             {
                 if far > 0.0 {
                     select_new_target(&mut commands, &mut editor, mesh_transform, entity);
                 }
-            }           
+            }
         }
     }
 }

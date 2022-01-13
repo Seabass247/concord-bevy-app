@@ -3,8 +3,8 @@ use bevy_kajiya::kajiya_egui::egui::Color32;
 use egui_gizmo::{Gizmo, GizmoMode, GizmoOrientation, GizmoResult, GizmoVisuals};
 use raycast::RayCast;
 
-mod target;
 mod raycast;
+mod target;
 
 use crate::target::Target;
 
@@ -101,5 +101,4 @@ pub struct EditorState {
     transform_gizmo: TransformGizmo,
     hide_gui: bool,
     last_ray_cast: RayCast,
-    ray_count: u32,
 }
