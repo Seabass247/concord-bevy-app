@@ -1,5 +1,6 @@
 /target
 /bevy-kajiya_
+/concord_engine/target
 /baked
 /assets/scenes/private-*
 /.vscode

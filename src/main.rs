@@ -1,6 +1,6 @@
 use bevy::{input::mouse::MouseMotion, window::WindowMode};
 use bevy::prelude::*;
-use bevy_kajiya::SelectableTag;
+use concord::{ConcordPlugins, editor::SelectableTag};
 use bevy_kajiya::{kajiya_render::{KajiyaSceneDescriptor, KajiyaCameraBundle, KajiyaCamera, KajiyaMeshInstanceBundle, KajiyaMeshInstance, KajiyaMesh, EnvironmentSettings}, BevyKajiyaPlugins};
 use dolly::prelude::{CameraRig, Position, Smooth, YawPitch};
 
@@ -21,6 +21,7 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         .add_plugins(BevyKajiyaPlugins)
+        .add_plugins(ConcordPlugins)
         .add_startup_system(setup_world)
         // .add_system(sun_move)
         .add_system(rotator_system)
