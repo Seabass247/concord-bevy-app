@@ -581,6 +581,7 @@ dependencies = [
  "bevy",
  "bevy_kajiya_logger",
  "bevy_kajiya_render",
+ "egui",
  "kajiya",
  "kajiya-egui",
 ]
