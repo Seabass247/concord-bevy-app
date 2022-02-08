@@ -1,8 +1,8 @@
-use bevy::prelude::*;
-use bevy_kajiya::kajiya_render::KajiyaMeshInstance;
+use bevy::{prelude::*};
+use bevy_kajiya::kajiya_render::{KajiyaMeshInstance, KajiyaMeshInstanceBundle, KajiyaMesh};
 use concord_logger::console_info;
 
-use crate::EditorState;
+use crate::{EditorState, NewInstanceSelect, SelectableTag};
 
 #[derive(Component, Copy, Clone)]
 pub struct TargetTag;
@@ -17,22 +17,28 @@ pub struct Target {
 pub fn select_new_target(
     commands: &mut Commands,
     editor: &mut EditorState,
-    transform: &GlobalTransform,
-    entity: Entity,
-) {
-    let new_target = Target {
-        entity: Some(entity),
-        origin: transform.translation,
-        orientation: transform.rotation,
-    };
+    new_target: Target,
+) -> bool {
+    let entity = new_target.entity.unwrap();
 
     if let Some(target) = editor.selected_target {
+        // If a target is already set and we are trying to set a new (and different) target
         if target.entity.unwrap() != entity {
             unset_entity_target(commands, editor);
             set_entity_target(commands, editor, entity, new_target);
+            console_info!("select different new true");
+
+            return true;
         }
+        console_info!("select new false");
+
+        false
     } else {
+        // The case where a target has not yet been set
         set_entity_target(commands, editor, entity, new_target);
+        console_info!("select completely new true");
+
+        true
     }
 }
 
@@ -44,7 +50,8 @@ fn set_entity_target(
 ) {
     commands.entity(entity).insert(TargetTag);
     editor.selected_target = Some(new_target);
-    // console_info!("Selected entity");
+
+    console_info!("Selected entity");
 }
 
 pub fn unset_entity_target(commands: &mut Commands, editor: &mut EditorState) {
@@ -53,68 +60,67 @@ pub fn unset_entity_target(commands: &mut Commands, editor: &mut EditorState) {
             .entity(target.entity.unwrap())
             .remove::<TargetTag>();
         editor.selected_target = None;
-        // console_info!("Deselect entity");
+        console_info!("Deselect entity");
     }
 }
 
-pub fn update_target_transform(
+pub fn update_target(
+    mut commands: Commands,
     mut editor: ResMut<EditorState>,
     mut query_trans: Query<(&mut Transform, &KajiyaMeshInstance)>,
 ) {
-    let mut target = if let Some(target) = editor.selected_target {
+    // Don't need to update/move target from gizmo when instancing mode is enabled
+    if editor.new_instancing_enabled {
+        return;
+    }
+
+    // Handle picked target event from the raycast if there is one
+    if let Some(target) = editor.picked_target.take() {
+        if select_new_target(&mut commands, &mut editor, target) {
+            editor.transform_gizmo.translation_offset = target.origin;
+            editor.transform_gizmo.rotation_offset = target.orientation;
+            editor.transform_gizmo.last_rotation = target.orientation;
+        }
+
+        return;
+    }
+
+    // Only perform target query if there is a target selected
+    let target = if let Some(target) = editor.selected_target {
         target
     } else {
         return;
     };
 
-    // Get the transform component of the target entity and mutate it
+    // Get the transform component of the target's entity and mutate it
     if let Ok((mut transform, _mesh)) = query_trans.get_mut(target.entity.unwrap()) {
-        if let Some(gizmo_response) = editor.transform_gizmo.last_response {
-            // The transform gizmo is active, Process any translation/rotation/scaling deltas
-            let delta: Vec3 = gizmo_response.value.into();
+        transform.translation = editor.transform_gizmo.last_translation;
+        transform.rotation = editor.transform_gizmo.last_rotation;
+    }
 
-            match gizmo_response.mode {
-                egui_gizmo::GizmoMode::Translate => {
-                    transform.translation = target.origin + delta;
-                }
-                egui_gizmo::GizmoMode::Rotate => {
-                    let delta: Vec3 = gizmo_response.value.into();
-                    let delta = delta * -1.0;
+}
 
-                    let mut rotation = Quat::from_rotation_x(delta.x);
-                    rotation *= Quat::from_rotation_y(delta.y);
-                    rotation *= Quat::from_rotation_z(delta.z);
-                    transform.rotation = rotation * target.orientation;
-                }
-                egui_gizmo::GizmoMode::Scale => {}
-            }
-
-            editor.transform_gizmo.last_transformation =
-                Some((gizmo_response.mode, gizmo_response.value));
-        } else {
-            // The transform gizmo is no longer active, update the saved state
-            target.origin = transform.translation;
-            target.orientation = transform.rotation;
-            editor.selected_target = Some(target);
-
-            // Handle events for the frame after gizmo is released
-            if let Some((mode, transform_delta)) = editor.transform_gizmo.last_transformation.take()
-            {
-                match mode {
-                    egui_gizmo::GizmoMode::Translate => {
-                        console_info!("Translated {:?}", transform_delta);
-                    }
-                    egui_gizmo::GizmoMode::Rotate => {
-                        let degrees_rotated = transform_delta
-                            .to_vec()
-                            .iter()
-                            .map(|r| r.to_degrees())
-                            .collect::<Vec<f32>>();
-                        console_info!("Rotated {:?}", degrees_rotated.as_slice());
-                    }
-                    egui_gizmo::GizmoMode::Scale => {}
-                }
-            }
+pub fn instance_new_target(
+    buttons: Res<Input<MouseButton>>,
+    keys: Res<Input<KeyCode>>,
+    editor: ResMut<EditorState>,
+    mut commands: Commands,
+) {
+    // Can only be instanced if flag is enabled and is triggered by pressing LShift+LClick
+    if editor.new_instancing_enabled &&
+    buttons.just_pressed(MouseButton::Left) &&
+    keys.pressed(KeyCode::LShift) {
+        if let NewInstanceSelect::MeshName(name) = &editor.new_instance_select {
+            commands.spawn_bundle(KajiyaMeshInstanceBundle {
+                mesh_instance: KajiyaMeshInstance {
+                    mesh: KajiyaMesh::Name(name.to_owned()),
+                    scale: editor.new_instance_scale,
+                },
+                transform: Transform::from_translation(editor.transform_gizmo.last_translation),
+                ..Default::default()
+            }).insert(SelectableTag);
         }
+        console_info!("Spawned mesh instance at {}", editor.transform_gizmo.last_translation);
+        return;
     }
 }

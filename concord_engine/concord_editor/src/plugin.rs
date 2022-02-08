@@ -1,7 +1,9 @@
+use std::fs;
+
 use crate::{
     raycast::{pick_meshes, RayCast},
-    target::{update_target_transform, TargetTag},
-    EditorState,
+    target::{update_target, TargetTag, instance_new_target},
+    EditorState, NewInstanceSelect,
 };
 use bevy::prelude::*;
 use bevy_kajiya::{
@@ -23,11 +25,14 @@ impl Plugin for ConcordEditorPlugin {
     fn build(&self, app: &mut App) {
         let editor_state = EditorState::default();
         app.insert_resource(editor_state);
+        app.add_startup_system(setup_gui);
         app.add_system(process_input);
-        app.add_system(update_target_transform);
+        app.add_system(update_target);
+        app.add_system(instance_new_target);
         app.add_system(pick_meshes);
         app.sub_app_mut(KajiyaRenderApp)
             .add_system_to_stage(KajiyaRenderStage::Extract, update_transform_gizmo)
+            .add_system_to_stage(KajiyaRenderStage::Extract, move_transform_gizmo)
             .add_system_to_stage(
                 KajiyaRenderStage::Extract,
                 process_gui.exclusive_system().at_end(),
@@ -55,6 +60,18 @@ pub fn process_input(mut editor: ResMut<EditorState>, keys: Res<Input<KeyCode>>)
             GizmoMode::Scale => GizmoMode::Rotate,
         }
     }
+}
+
+pub fn setup_gui(mut editor: ResMut<EditorState>) {
+    let paths = fs::read_dir("assets/meshes/").unwrap();
+
+    for path in paths {
+        let mut mesh_name = path.unwrap().path().display().to_string();
+        mesh_name = mesh_name.replace("assets/meshes/", "");
+        editor.meshes_list.push(mesh_name);
+    }
+
+    editor.new_instance_scale = 1.0;
 }
 
 pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
@@ -106,6 +123,27 @@ pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
 
             ui.separator();
 
+            ui.checkbox(&mut editor.new_instancing_enabled, "Spawn New Instance");
+            egui::ComboBox::from_id_source("new_instance_combo_box")
+                .selected_text(format!("{}", editor.new_instance_select))
+                .show_ui(ui, |ui| {
+                    for mesh in editor.meshes_list.clone() {
+                        ui.selectable_value(
+                            &mut editor.new_instance_select,
+                            NewInstanceSelect::MeshName(mesh.clone()),
+                            mesh,
+                        );
+                    }
+                    // ui.selectable_value(&mut editor.transform_gizmo.mode, GizmoMode::Scale, "Scale");
+                });
+            ui.label("Instanced scale");
+            ui.add(
+                Slider::new(&mut editor.new_instance_scale, (0.0)..=(1.0))
+                    .clamp_to_range(true)
+                    .smart_aim(true)
+            );
+            ui.separator();
+
             ui.label("Selected Transform");
             let mut translation_str = "".to_string();
             let mut rotation_str = "".to_string();
@@ -153,6 +191,13 @@ pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
                 });
             });
     } else {
+        // egui::Area::new("viewport")
+        //     .fixed_pos((0.0, 0.0))
+        //     .show(&egui.egui, |ui| {
+        //         if let Some(ray) = editor.transform_gizmo.gizmo().pointer_ray(ui) {
+        //             editor.last_ray_cast = RayCast::with_ray(ray);
+        //         }
+        //     });
         editor.transform_gizmo.last_response = None;
     }
 }
@@ -160,7 +205,6 @@ pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
 pub fn update_transform_gizmo(
     mut editor: ResMut<EditorState>,
     render_world: Res<RenderWorld>,
-    query: Query<&GlobalTransform, With<TargetTag>>,
 ) {
     let extracted_camera = render_world.get_resource::<ExtractedCamera>().unwrap();
 
@@ -168,17 +212,37 @@ pub fn update_transform_gizmo(
     let projection_matrix = extracted_camera.camera.projection_matrix();
 
     if let Some(gizmo_response) = editor.transform_gizmo.last_response {
-        editor.transform_gizmo.model_matrix = gizmo_response.transform;
-    } else {
-        // The transform gizmo is no longer active, update the saved state
-        if let Some(target) = editor.selected_target {
-            if let Ok(transform) = query.get(target.entity.unwrap()) {
-                editor.transform_gizmo.model_matrix =
-                    Mat4::from_translation(transform.translation).to_cols_array_2d();
+        let transform = Mat4::from_cols_array_2d(&gizmo_response.transform);
+        let translation = transform.to_scale_rotation_translation().2;
+        editor.transform_gizmo.last_translation = translation;
+        editor.transform_gizmo.translation_offset = editor.transform_gizmo.last_translation;
+
+        match gizmo_response.mode {
+            egui_gizmo::GizmoMode::Rotate => {
+                let delta: Vec3 = gizmo_response.value.into();
+                let delta = delta * -1.0;
+
+                let mut rotation = Quat::from_rotation_x(delta.x);
+                rotation *= Quat::from_rotation_y(delta.y);
+                rotation *= Quat::from_rotation_z(delta.z);
+                editor.transform_gizmo.last_rotation = rotation * editor.transform_gizmo.rotation_offset;
             }
+            _ => {}
         }
+
+    } else {
+        editor.transform_gizmo.last_translation = editor.transform_gizmo.translation_offset;
+        editor.transform_gizmo.rotation_offset = editor.transform_gizmo.last_rotation;
     }
+
+    editor.transform_gizmo.model_matrix =
+        Mat4::from_translation(editor.transform_gizmo.last_translation).to_cols_array_2d();
 
     editor.transform_gizmo.view_matrix = view_matrix.to_cols_array_2d();
     editor.transform_gizmo.projection_matrix = projection_matrix.to_cols_array_2d();
 }
+
+pub fn move_transform_gizmo(
+    mut editor: ResMut<EditorState>,
+) {
+   }

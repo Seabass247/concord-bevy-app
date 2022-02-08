@@ -1,11 +1,12 @@
 use bevy::{math::Vec3A, prelude::*};
 
-use bevy_kajiya::kajiya_render::{mesh::Aabb, KajiyaMeshInstance};
+use bevy_kajiya::kajiya_render::{mesh::Aabb, KajiyaMeshInstance, KajiyaMeshInstanceBundle, KajiyaMesh};
+use concord_logger::console_info;
 use egui_gizmo::{math, Ray};
 
 use crate::{
-    target::{select_new_target, TargetTag},
-    EditorState,
+    target::{select_new_target, TargetTag, Target, unset_entity_target},
+    EditorState, NewInstanceSelect,
 };
 
 /// A 3D ray, with an origin and direction. The direction is guaranteed to be normalized.
@@ -79,25 +80,42 @@ impl RayCast {
 }
 
 pub fn pick_meshes(
-    mut commands: Commands,
     buttons: Res<Input<MouseButton>>,
     mut editor: ResMut<EditorState>,
+    mut commands: Commands,
+    keys: Res<Input<KeyCode>>,
     query: Query<
         (Entity, &GlobalTransform, &KajiyaMeshInstance),
         (With<SelectableTag>, Without<TargetTag>),
     >,
 ) {
-    if buttons.just_pressed(MouseButton::Left) {
-        for (entity, mesh_transform, _mesh) in query.iter() {
+    // Handle mouse object picking events for action LCtrl+LeftClick
+    if buttons.just_pressed(MouseButton::Left) && keys.pressed(KeyCode::LControl) {
+        for (entity, mesh_transform, mesh) in query.iter() {
+            console_info!("queried mesh {:?}", mesh.mesh);
+
             let mesh_aabb = Aabb::from_center_padding(Vec3::ZERO, 1.0);
             if let Some([_, far]) = editor
                 .last_ray_cast
                 .intersects_aabb(&mesh_aabb, &mesh_transform.compute_matrix())
             {
                 if far > 0.0 {
-                    select_new_target(&mut commands, &mut editor, mesh_transform, entity);
+                    console_info!("found clickable target");
+
+                    let target = Target {
+                        entity: Some(entity),
+                        origin: mesh_transform.translation,
+                        orientation: mesh_transform.rotation,
+                    };
+                    editor.picked_target = Some(target);
                 }
             }
+        }
+
+        // Clear target selection if clicked on nothing
+        if editor.picked_target.is_none() {
+            console_info!("try unset entity (clicked on nothing)");
+            unset_entity_target(&mut commands, &mut editor);
         }
     }
 }

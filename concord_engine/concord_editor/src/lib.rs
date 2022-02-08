@@ -1,3 +1,5 @@
+use std::fmt;
+
 use bevy::prelude::*;
 use bevy_kajiya::kajiya_egui::egui::Color32;
 use egui_gizmo::{Gizmo, GizmoMode, GizmoOrientation, GizmoResult, GizmoVisuals};
@@ -18,7 +20,38 @@ pub const DEFAULT_SNAP_ANGLE: f32 = 15.0;
 /// The default snapping distance for translation
 pub const DEFAULT_SNAP_DISTANCE: f32 = 1.0;
 
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum NewInstanceSelect {
+    MeshName(String),
+    None,
+}
+
+impl fmt::Display for NewInstanceSelect {
+    // This trait requires `fmt` with this exact signature.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Write strictly the first element into the supplied output
+        // stream: `f`. Returns `fmt::Result` which indicates whether the
+        // operation succeeded or failed. Note that `write!` uses syntax which
+        // is very similar to `println!`.
+        match self {
+            NewInstanceSelect::MeshName(name) => write!(f, "{}", name),
+            NewInstanceSelect::None => write!(f, "{}", "None"),
+        }
+        
+    }
+}
+
+impl Default for NewInstanceSelect {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
 pub struct TransformGizmo {
+    last_translation: Vec3,
+    last_rotation: Quat,
+    translation_offset: Vec3,
+    rotation_offset: Quat,
     view_matrix: [[f32; 4]; 4],
     projection_matrix: [[f32; 4]; 4],
     model_matrix: [[f32; 4]; 4],
@@ -34,6 +67,10 @@ pub struct TransformGizmo {
 
 impl Default for TransformGizmo {
     fn default() -> Self {
+        let last_translation = Vec3::ZERO;
+        let last_rotation = Quat::IDENTITY;
+        let translation_offset = Vec3::ZERO;
+        let rotation_offset = Quat::IDENTITY;
         let view_matrix = [[0.0; 4]; 4];
         let projection_matrix = [[0.0; 4]; 4];
         let model_matrix = Mat4::IDENTITY.to_cols_array_2d();
@@ -51,6 +88,10 @@ impl Default for TransformGizmo {
         let orientation = GizmoOrientation::Global;
 
         Self {
+            last_translation,
+            last_rotation,
+            translation_offset,
+            rotation_offset,
             view_matrix,
             projection_matrix,
             model_matrix,
@@ -69,6 +110,10 @@ impl Default for TransformGizmo {
 impl TransformGizmo {
     pub fn gizmo(&self) -> Gizmo {
         let Self {
+            last_translation,
+            last_rotation,
+            translation_offset,
+            rotation_offset,
             view_matrix,
             projection_matrix,
             model_matrix,
@@ -98,6 +143,11 @@ impl TransformGizmo {
 #[derive(Default)]
 pub struct EditorState {
     pub selected_target: Option<Target>,
+    pub picked_target: Option<(Target)>,
+    pub meshes_list: Vec<String>,
+    pub new_instance_select: NewInstanceSelect,
+    pub new_instance_scale: f32,
+    pub new_instancing_enabled: bool,
     transform_gizmo: TransformGizmo,
     hide_gui: bool,
     last_ray_cast: RayCast,

@@ -1,7 +1,7 @@
 use bevy::{input::mouse::MouseMotion, window::WindowMode};
 use bevy::prelude::*;
 use concord::{ConcordPlugins, editor::SelectableTag};
-use bevy_kajiya::{kajiya_render::{KajiyaSceneDescriptor, KajiyaCameraBundle, KajiyaCamera, KajiyaMeshInstanceBundle, KajiyaMeshInstance, KajiyaMesh, EnvironmentSettings}, BevyKajiyaPlugins};
+use bevy_kajiya::{kajiya_render::{KajiyaDescriptor, KajiyaCameraBundle, KajiyaCamera, KajiyaMeshInstanceBundle, KajiyaMeshInstance, KajiyaMesh, EnvironmentSettings}, BevyKajiyaPlugins};
 use dolly::prelude::{CameraRig, Position, Smooth, YawPitch};
 
 fn main() {
@@ -15,7 +15,7 @@ fn main() {
             mode: WindowMode::BorderlessFullscreen,
             ..Default::default()
         })
-        .insert_resource(KajiyaSceneDescriptor {
+        .insert_resource(KajiyaDescriptor {
             scene_name: "car".to_string(),
             ..Default::default()
         })
@@ -87,7 +87,7 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
     }).insert(SelectableTag);
     commands.spawn_bundle(KajiyaMeshInstanceBundle {
         mesh_instance: KajiyaMeshInstance { 
-            mesh: KajiyaMesh::Name("336_lrm".to_string()),
+            mesh: KajiyaMesh::Name("ring".to_string()),
             ..Default::default()
         },
         transform: Transform::from_translation(Vec3::new(-5.0, -0.001, -5.0)),
