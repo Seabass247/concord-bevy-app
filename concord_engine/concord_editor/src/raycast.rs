@@ -112,10 +112,10 @@ pub fn pick_meshes(
             }
         }
 
-        // Clear target selection if clicked on nothing
-        if editor.picked_target.is_none() {
-            console_info!("try unset entity (clicked on nothing)");
-            unset_entity_target(&mut commands, &mut editor);
-        }
+        // // Clear target selection if clicked on nothing
+        // if editor.picked_target.is_none() {
+        //     console_info!("try unset entity (clicked on nothing)");
+        //     unset_entity_target(&mut commands, &mut editor);
+        // }
     }
 }
