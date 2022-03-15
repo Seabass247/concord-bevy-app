@@ -8,7 +8,7 @@ use crate::{
 use bevy::prelude::*;
 use bevy_kajiya::{
     egui::{LayerId, ScrollArea, Slider},
-    kajiya_egui::{egui, EguiContext},
+    kajiya_egui::{egui},
     kajiya_render::{
         camera::ExtractedCamera,
         plugin::{KajiyaRenderApp, KajiyaRenderStage, RenderWorld},
@@ -74,13 +74,13 @@ pub fn setup_gui(mut editor: ResMut<EditorState>) {
     editor.new_instance_scale = 1.0;
 }
 
-pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
+pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>) {
     if editor.hide_gui {
         return;
     }
     egui::SidePanel::left("backend_panel")
         .resizable(false)
-        .show(&egui.egui, |ui| {
+        .show(egui.ctx(), |ui| {
             ui.vertical_centered(|ui| {
                 ui.heading("Editor");
             });
@@ -159,7 +159,7 @@ pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
         .min_height(100.0)
         .max_height(400.0)
         .resizable(true)
-        .show(&egui.egui, |ui| {
+        .show(egui.ctx(), |ui| {
             ui.vertical_centered(|ui| {
                 ui.heading("Console");
 
@@ -180,7 +180,7 @@ pub fn process_gui(egui: Res<EguiContext>, mut editor: ResMut<EditorState>) {
     if editor.selected_target.is_some() {
         egui::Area::new("viewport")
             .fixed_pos((0.0, 0.0))
-            .show(&egui.egui, |ui| {
+            .show(egui.ctx(), |ui| {
                 ui.with_layer_id(LayerId::background(), |ui| {
                     let (last_response, ray) = editor.transform_gizmo.gizmo().interact(ui);
                     if let Some(ray) = ray {
