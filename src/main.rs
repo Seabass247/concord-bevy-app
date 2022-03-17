@@ -23,7 +23,7 @@ fn main() {
         .add_plugins(BevyKajiyaPlugins)
         .add_plugins(ConcordPlugins)
         .add_startup_system(setup_world)
-        // .add_system(sun_move)
+        .add_system(sun_move)
         .add_system(rotator_system)
         .add_system(drive_camera)
         .run();
@@ -103,6 +103,23 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
         ..Default::default()
     });
 
+    // commands.spawn_bundle(KajiyaMeshInstanceBundle {
+    //     mesh_instance: KajiyaMeshInstance { 
+    //         mesh: KajiyaMesh::Name("dirt".to_string()),
+    //         ..Default::default()
+    //     },
+    //     transform: Transform::from_translation(Vec3::new(0.0, 10.0, 0.0)),
+    //     ..Default::default()
+    // });
+
+    // commands.spawn_bundle(KajiyaMeshInstanceBundle {
+    //     mesh_instance: KajiyaMeshInstance { 
+    //         mesh: KajiyaMesh::Name("cube".to_string()),
+    //         ..Default::default()
+    //     },
+    //     transform: Transform::from_translation(Vec3::new(0.0, 10.5, 0.0)),
+    //     ..Default::default()
+    // }).insert(SelectableTag);
 }
 
 fn sun_move(time: Res<Time>, mut query: Query<&mut EnvironmentSettings, With<KajiyaCamera>>, mut mouse_motion_events: EventReader<MouseMotion>,
@@ -111,17 +128,17 @@ fn sun_move(time: Res<Time>, mut query: Query<&mut EnvironmentSettings, With<Kaj
     let mut env = query.iter_mut().next().unwrap();
     let mut mouse_delta = Vec2::ZERO;
     let mouse_sensitivity = 0.005;
-    if mouse_buttons.pressed(MouseButton::Left) {
+    if mouse_buttons.pressed(MouseButton::Middle) {
         for event in mouse_motion_events.iter() {
             mouse_delta += event.delta;
         }
         env.sun_theta_phi.0 += mouse_sensitivity * mouse_delta.x;
         env.sun_theta_phi.1 += mouse_sensitivity * mouse_delta.y;
     } else {
-        let time_scale = 0.0005;
-        let theta = 180.0 * (time.time_since_startup().as_secs_f32() * time_scale).sin();
-        let phi = 180.0 * (time.time_since_startup().as_secs_f32() * time_scale).sin();
-        env.sun_theta_phi = (theta, phi);
+        // let time_scale = 0.0005;
+        // let theta = 180.0 * (time.time_since_startup().as_secs_f32() * time_scale).sin();
+        // let phi = 180.0 * (time.time_since_startup().as_secs_f32() * time_scale).sin();
+        // env.sun_theta_phi = (theta, phi);
     }
 }
 
