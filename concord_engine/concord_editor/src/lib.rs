@@ -164,4 +164,5 @@ pub struct EditorState {
     transform_gizmo: TransformGizmo,
     hide_gui: bool,
     last_ray_cast: RayCast,
+    pointer: Vec2,
 }

@@ -1,7 +1,7 @@
 use std::fs;
 
 use crate::{
-    raycast::{pick_meshes, RayCast},
+    raycast::{pick_meshes, RayCast, pointer_ray},
     target::{update_target, TargetTag, instance_new_target},
     EditorState, NewInstanceSelect,
 };
@@ -30,6 +30,7 @@ impl Plugin for ConcordEditorPlugin {
         app.add_system(update_target);
         app.add_system(instance_new_target);
         app.add_system(pick_meshes);
+        app.add_system(pointer_ray);
         app.sub_app_mut(KajiyaRenderApp)
             .add_system_to_stage(KajiyaRenderStage::Extract, update_transform_gizmo)
             .add_system_to_stage(KajiyaRenderStage::Extract, move_transform_gizmo)
@@ -198,27 +199,17 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
             });
         });
 
-    if editor.selected_target.is_some() {
+    // Update and show gizmo UI
+    if editor.selected_target.is_some() || editor.new_instancing_enabled {
         egui::Area::new("viewport")
             .fixed_pos((0.0, 0.0))
             .show(egui.ctx(), |ui| {
                 ui.with_layer_id(LayerId::background(), |ui| {
-                    let (last_response, ray) = editor.transform_gizmo.gizmo().interact(ui);
-                    if let Some(ray) = ray {
-                        editor.last_ray_cast = RayCast::with_ray(ray);
-                    }
-
+                    let last_response = editor.transform_gizmo.gizmo().interact(ui);
                     editor.transform_gizmo.last_response = last_response;
                 });
             });
     } else {
-        // egui::Area::new("viewport")
-        //     .fixed_pos((0.0, 0.0))
-        //     .show(&egui.egui, |ui| {
-        //         if let Some(ray) = editor.transform_gizmo.gizmo().pointer_ray(ui) {
-        //             editor.last_ray_cast = RayCast::with_ray(ray);
-        //         }
-        //     });
         editor.transform_gizmo.last_response = None;
     }
 }
@@ -253,7 +244,6 @@ pub fn update_transform_gizmo(
                 let delta = (delta[0] + delta[1] + delta[2]) / 3.0 - 1.0;
 
                 editor.transform_gizmo.last_scale = editor.transform_gizmo.scale_offset + editor.transform_gizmo.scale_origin * Vec3::splat(delta);
-                console_info!("last_scale {:?}", delta);
             }
             _ => {}
         }
@@ -274,4 +264,5 @@ pub fn update_transform_gizmo(
 pub fn move_transform_gizmo(
     mut editor: ResMut<EditorState>,
 ) {
-   }
+
+}

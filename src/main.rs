@@ -78,21 +78,32 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
     }).insert(Rotator {
         ccw: true,
     });
-
-    commands.spawn_bundle(KajiyaMeshInstanceBundle {
-        mesh_instance: KajiyaMeshInstance { 
-            mesh: KajiyaMesh::Name("336_lrm".to_string()),
-            ..Default::default()
-        },
-        transform: Transform::from_translation(Vec3::new(5.0, -0.001, 5.0)).with_scale(Vec3::splat(0.01)),
-        ..Default::default()
-    }).insert(SelectableTag);
+    
     commands.spawn_bundle(KajiyaMeshInstanceBundle {
         mesh_instance: KajiyaMeshInstance { 
             mesh: KajiyaMesh::Name("ring".to_string()),
             ..Default::default()
         },
         transform: Transform::from_translation(Vec3::new(-5.0, -0.001, -5.0)),
+        ..Default::default()
+    }).insert(SelectableTag);
+
+    commands.spawn_bundle(KajiyaMeshInstanceBundle {
+        mesh_instance: KajiyaMeshInstance { 
+            mesh: KajiyaMesh::Name("336_lrm".to_string()),
+            selection_bb_size: 100.0,
+            ..Default::default()
+        },
+        transform: Transform::from_translation(Vec3::new(-5.0, 5.0, -5.0)).with_scale(Vec3::splat(0.01)),
+        ..Default::default()
+    }).insert(SelectableTag);
+
+    commands.spawn_bundle(KajiyaMeshInstanceBundle {
+        mesh_instance: KajiyaMeshInstance { 
+            mesh: KajiyaMesh::Name("ring".to_string()),
+            ..Default::default()
+        },
+        transform: Transform::from_translation(Vec3::new(-5.0, 10., -5.0)),
         ..Default::default()
     }).insert(SelectableTag);
 

@@ -28,17 +28,14 @@ pub fn select_new_target(
         if target.entity.unwrap() != entity {
             unset_entity_target(commands, editor);
             set_entity_target(commands, editor, entity, new_target);
-            console_info!("select different new true");
 
             return true;
         }
-        console_info!("select new false");
 
         false
     } else {
         // The case where a target has not yet been set
         set_entity_target(commands, editor, entity, new_target);
-        console_info!("select completely new true");
 
         true
     }
@@ -52,8 +49,7 @@ fn set_entity_target(
 ) {
     commands.entity(entity).insert(TargetTag);
     editor.selected_target = Some(new_target);
-
-    console_info!("Selected entity");
+    console_info!("Selected new instance");
 }
 
 pub fn unset_entity_target(commands: &mut Commands, editor: &mut EditorState) {
@@ -62,8 +58,9 @@ pub fn unset_entity_target(commands: &mut Commands, editor: &mut EditorState) {
             .entity(target.entity.unwrap())
             .remove::<TargetTag>();
         editor.selected_target = None;
-        console_info!("Deselect entity");
     }
+
+    console_info!("Deselected instance");
 }
 
 pub fn update_target(
@@ -111,7 +108,7 @@ pub fn update_target(
 pub fn instance_new_target(
     buttons: Res<Input<MouseButton>>,
     keys: Res<Input<KeyCode>>,
-    editor: ResMut<EditorState>,
+    mut editor: ResMut<EditorState>,
     mut commands: Commands,
 ) {
     // Can only be instanced if flag is enabled and is triggered by pressing LShift+LClick
@@ -122,13 +119,17 @@ pub fn instance_new_target(
             commands.spawn_bundle(KajiyaMeshInstanceBundle {
                 mesh_instance: KajiyaMeshInstance {
                     mesh: KajiyaMesh::Name(name.to_owned()),
-                    emission: 1.0,
+                    ..Default::default()
                 },
                 transform: Transform::from_translation(editor.transform_gizmo.last_translation),
                 ..Default::default()
             }).insert(SelectableTag);
+            
+            // Make sure the old target instance is not selected when leaving "spawn new instance" mode
+            unset_entity_target(&mut commands, &mut editor);
+            
+            console_info!("Spawned mesh instance at {}", editor.transform_gizmo.last_translation);
         }
-        console_info!("Spawned mesh instance at {}", editor.transform_gizmo.last_translation);
         return;
     }
 }
