@@ -12,6 +12,8 @@ pub struct Target {
     pub entity: Option<Entity>,
     pub origin: Vec3,
     pub orientation: Quat,
+    pub scale: Vec3,
+    pub emission: f32,
 }
 
 pub fn select_new_target(
@@ -67,7 +69,7 @@ pub fn unset_entity_target(commands: &mut Commands, editor: &mut EditorState) {
 pub fn update_target(
     mut commands: Commands,
     mut editor: ResMut<EditorState>,
-    mut query_trans: Query<(&mut Transform, &KajiyaMeshInstance)>,
+    mut query_trans: Query<(&mut Transform, &mut KajiyaMeshInstance)>,
 ) {
     // Don't need to update/move target from gizmo when instancing mode is enabled
     if editor.new_instancing_enabled {
@@ -80,6 +82,10 @@ pub fn update_target(
             editor.transform_gizmo.translation_offset = target.origin;
             editor.transform_gizmo.rotation_offset = target.orientation;
             editor.transform_gizmo.last_rotation = target.orientation;
+            editor.transform_gizmo.scale_offset = target.scale;
+            editor.transform_gizmo.last_scale = target.scale;
+            editor.transform_gizmo.scale_origin = target.scale;
+            editor.selected_emission = target.emission;
         }
 
         return;
@@ -93,9 +99,11 @@ pub fn update_target(
     };
 
     // Get the transform component of the target's entity and mutate it
-    if let Ok((mut transform, _mesh)) = query_trans.get_mut(target.entity.unwrap()) {
+    if let Ok((mut transform, mut mesh)) = query_trans.get_mut(target.entity.unwrap()) {
         transform.translation = editor.transform_gizmo.last_translation;
         transform.rotation = editor.transform_gizmo.last_rotation;
+        transform.scale = editor.transform_gizmo.last_scale;
+        mesh.emission = editor.selected_emission;
     }
 
 }
@@ -114,7 +122,7 @@ pub fn instance_new_target(
             commands.spawn_bundle(KajiyaMeshInstanceBundle {
                 mesh_instance: KajiyaMeshInstance {
                     mesh: KajiyaMesh::Name(name.to_owned()),
-                    scale: editor.new_instance_scale,
+                    emission: 1.0,
                 },
                 transform: Transform::from_translation(editor.transform_gizmo.last_translation),
                 ..Default::default()

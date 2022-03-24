@@ -50,8 +50,11 @@ impl Default for NewInstanceSelect {
 pub struct TransformGizmo {
     last_translation: Vec3,
     last_rotation: Quat,
+    last_scale: Vec3,
     translation_offset: Vec3,
     rotation_offset: Quat,
+    scale_offset: Vec3,
+    scale_origin: Vec3,
     view_matrix: [[f32; 4]; 4],
     projection_matrix: [[f32; 4]; 4],
     model_matrix: [[f32; 4]; 4],
@@ -69,7 +72,10 @@ impl Default for TransformGizmo {
     fn default() -> Self {
         let last_translation = Vec3::ZERO;
         let last_rotation = Quat::IDENTITY;
+        let last_scale = Vec3::ONE;
         let translation_offset = Vec3::ZERO;
+        let scale_offset = Vec3::ZERO;
+        let scale_origin = Vec3::ONE;
         let rotation_offset = Quat::IDENTITY;
         let view_matrix = [[0.0; 4]; 4];
         let projection_matrix = [[0.0; 4]; 4];
@@ -90,8 +96,11 @@ impl Default for TransformGizmo {
         Self {
             last_translation,
             last_rotation,
+            last_scale,
             translation_offset,
             rotation_offset,
+            scale_offset,
+            scale_origin,
             view_matrix,
             projection_matrix,
             model_matrix,
@@ -100,7 +109,7 @@ impl Default for TransformGizmo {
             orientation,
             last_response: None,
             last_transformation: None,
-            snapping_off: false,
+            snapping_off: true,
             snap_angle: DEFAULT_SNAP_ANGLE,
             snap_distance: DEFAULT_SNAP_DISTANCE,
         }
@@ -112,8 +121,11 @@ impl TransformGizmo {
         let Self {
             last_translation,
             last_rotation,
+            last_scale,
             translation_offset,
             rotation_offset,
+            scale_offset,
+            scale_origin,
             view_matrix,
             projection_matrix,
             model_matrix,
@@ -148,6 +160,7 @@ pub struct EditorState {
     pub new_instance_select: NewInstanceSelect,
     pub new_instance_scale: f32,
     pub new_instancing_enabled: bool,
+    pub selected_emission: f32,
     transform_gizmo: TransformGizmo,
     hide_gui: bool,
     last_ray_cast: RayCast,

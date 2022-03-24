@@ -106,6 +106,8 @@ pub fn pick_meshes(
                         entity: Some(entity),
                         origin: mesh_transform.translation,
                         orientation: mesh_transform.rotation,
+                        scale: mesh_transform.scale,
+                        emission: mesh.emission,
                     };
                     editor.picked_target = Some(target);
                 }

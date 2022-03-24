@@ -43,11 +43,6 @@ impl Plugin for ConcordEditorPlugin {
 }
 
 pub fn process_input(mut editor: ResMut<EditorState>, keys: Res<Input<KeyCode>>) {
-    if keys.pressed(KeyCode::LControl) {
-        editor.transform_gizmo.snapping_off = true;
-    } else {
-        editor.transform_gizmo.snapping_off = false;
-    }
 
     if keys.just_pressed(KeyCode::Tab) {
         editor.hide_gui = !editor.hide_gui;
@@ -55,9 +50,9 @@ pub fn process_input(mut editor: ResMut<EditorState>, keys: Res<Input<KeyCode>>)
 
     if keys.just_pressed(KeyCode::T) {
         editor.transform_gizmo.mode = match editor.transform_gizmo.mode {
-            GizmoMode::Rotate => GizmoMode::Translate,
+            GizmoMode::Rotate => GizmoMode::Scale,
             GizmoMode::Translate => GizmoMode::Rotate,
-            GizmoMode::Scale => GizmoMode::Rotate,
+            GizmoMode::Scale => GizmoMode::Translate,
         }
     }
 }
@@ -101,19 +96,26 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
                         GizmoMode::Translate,
                         "Translate Mode",
                     );
+                    ui.selectable_value(
+                        &mut editor.transform_gizmo.mode,
+                        GizmoMode::Scale,
+                        "Scale Mode",
+                    );
                     // ui.selectable_value(&mut editor.transform_gizmo.mode, GizmoMode::Scale, "Scale");
                 });
 
+            ui.checkbox(&mut editor.transform_gizmo.snapping_off, "Disable Tool Snapping");
+            
             ui.separator();
-
-            ui.label("Translation Snapping");
+            
+            ui.label("Snapping distance");
             ui.add(
                 Slider::new(&mut editor.transform_gizmo.snap_distance, (0.0)..=(1.0))
                     .clamp_to_range(true)
                     .smart_aim(true)
                     .text("units"),
             );
-            ui.label("Rotation Snapping");
+            ui.label("Snapping Angle");
             ui.add(
                 Slider::new(&mut editor.transform_gizmo.snap_angle, (0.0)..=(90.0))
                     .clamp_to_range(true)
@@ -142,17 +144,36 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
                     .clamp_to_range(true)
                     .smart_aim(true)
             );
+
             ui.separator();
 
-            ui.label("Selected Transform");
+            ui.label("Selected Instance");
+
+            ui.horizontal(|ui| {
+                ui.label("Emission");
+
+                ui.add(
+                    Slider::new(&mut editor.selected_emission, (0.0)..=(10.0))
+                        .clamp_to_range(false)
+                        .smart_aim(true)
+                );
+            });
+
             let mut translation_str = "".to_string();
             let mut rotation_str = "".to_string();
             if let Some(target) = editor.selected_target {
                 translation_str = format!("{:?}", target.origin);
                 rotation_str = format!("{:?}", target.orientation);
             }
-            ui.add(egui::TextEdit::singleline(&mut translation_str).interactive(false));
-            ui.add(egui::TextEdit::singleline(&mut rotation_str).interactive(false));
+            ui.horizontal(|ui| {
+                ui.add(egui::TextEdit::singleline(&mut translation_str).interactive(false));
+                ui.label("Position");
+            });
+            ui.horizontal(|ui| {
+                ui.add(egui::TextEdit::singleline(&mut rotation_str).interactive(false));
+                ui.label("Rotation");
+            });
+
         });
 
     egui::TopBottomPanel::bottom("bottom_panel")
@@ -227,12 +248,20 @@ pub fn update_transform_gizmo(
                 rotation *= Quat::from_rotation_z(delta.z);
                 editor.transform_gizmo.last_rotation = rotation * editor.transform_gizmo.rotation_offset;
             }
+            egui_gizmo::GizmoMode::Scale => {
+                let delta: Vec3 = gizmo_response.value.into();
+                let delta = (delta[0] + delta[1] + delta[2]) / 3.0 - 1.0;
+
+                editor.transform_gizmo.last_scale = editor.transform_gizmo.scale_offset + editor.transform_gizmo.scale_origin * Vec3::splat(delta);
+                console_info!("last_scale {:?}", delta);
+            }
             _ => {}
         }
 
     } else {
         editor.transform_gizmo.last_translation = editor.transform_gizmo.translation_offset;
         editor.transform_gizmo.rotation_offset = editor.transform_gizmo.last_rotation;
+        editor.transform_gizmo.scale_offset = editor.transform_gizmo.last_scale;
     }
 
     editor.transform_gizmo.model_matrix =

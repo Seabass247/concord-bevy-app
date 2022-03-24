@@ -1,5 +1,7 @@
 use bevy::{input::mouse::MouseMotion, window::WindowMode};
 use bevy::prelude::*;
+use concord::logger::{console_info, get_console_logs};
+
 use concord::{ConcordPlugins, editor::SelectableTag};
 use bevy_kajiya::{kajiya_render::{KajiyaDescriptor, KajiyaCameraBundle, KajiyaCamera, KajiyaMeshInstanceBundle, KajiyaMeshInstance, KajiyaMesh, EnvironmentSettings}, BevyKajiyaPlugins};
 use dolly::prelude::{CameraRig, Position, Smooth, YawPitch};
@@ -12,7 +14,7 @@ fn main() {
             height: 1080.,
             vsync: false,
             resizable: false,
-            mode: WindowMode::BorderlessFullscreen,
+            mode: WindowMode::Windowed,
             ..Default::default()
         })
         .insert_resource(KajiyaDescriptor {
@@ -49,9 +51,9 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
         parent.spawn_bundle(KajiyaMeshInstanceBundle {
             mesh_instance: KajiyaMeshInstance { 
                 mesh: KajiyaMesh::Name("smiley_box".to_string()),
-                scale: 0.1,
+                ..Default::default()
             },
-            transform: Transform::from_translation(Vec3::new(0.0,0.0,0.4)),
+            transform: Transform::from_translation(Vec3::new(0.0,0.0,0.4)).with_scale(Vec3::splat(0.1)),
             ..Default::default()
         }).insert(BodyTag);
     });
@@ -82,7 +84,7 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
             mesh: KajiyaMesh::Name("336_lrm".to_string()),
             ..Default::default()
         },
-        transform: Transform::from_translation(Vec3::new(5.0, -0.001, 5.0)),
+        transform: Transform::from_translation(Vec3::new(5.0, -0.001, 5.0)).with_scale(Vec3::splat(0.01)),
         ..Default::default()
     }).insert(SelectableTag);
     commands.spawn_bundle(KajiyaMeshInstanceBundle {
@@ -157,6 +159,7 @@ fn rotator_system(time: Res<Time>, mut query: Query<(&mut Transform, &Rotator)>)
             -1.0
         };
 
+        transform.scale = Vec3::splat((time.seconds_since_startup()).sin() as f32 + 1.0);
         transform.rotation *= Quat::from_rotation_y(ang_vel * time.delta_seconds());
     }
 }
