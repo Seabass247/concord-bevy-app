@@ -3,7 +3,7 @@ use std::fs;
 use crate::{
     raycast::{pick_meshes, RayCast, pointer_ray},
     target::{update_target, TargetTag, instance_new_target},
-    EditorState, NewInstanceSelect,
+    EditorState, NewInstanceSelect, scene::{save_scene_system, load_scene_system}, SelectableTag,
 };
 use bevy::prelude::*;
 use bevy_kajiya::{
@@ -12,7 +12,7 @@ use bevy_kajiya::{
     kajiya_render::{
         camera::ExtractedCamera,
         plugin::{KajiyaRenderApp, KajiyaRenderStage, RenderWorld},
-        KajiyaCamera,
+        KajiyaCamera, EnvironmentSettings, mesh::Aabb, KajiyaMeshInstance,
     },
 };
 use concord_logger::{console_info, get_console_logs};
@@ -31,6 +31,15 @@ impl Plugin for ConcordEditorPlugin {
         app.add_system(instance_new_target);
         app.add_system(pick_meshes);
         app.add_system(pointer_ray);
+        app.add_system(save_scene_system);
+        app.add_startup_system(load_scene_system);
+
+        app.register_type::<KajiyaCamera>();
+        app.register_type::<EnvironmentSettings>();
+        app.register_type::<Aabb>();
+        app.register_type::<KajiyaMeshInstance>();
+        app.register_type::<SelectableTag>();
+
         app.sub_app_mut(KajiyaRenderApp)
             .add_system_to_stage(KajiyaRenderStage::Extract, update_transform_gizmo)
             .add_system_to_stage(KajiyaRenderStage::Extract, move_transform_gizmo)

@@ -1,0 +1,516 @@
+[
+  (
+    entity: 0,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (20.0, 0.0, 0.0),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (20.0, 0.0, 0.0),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "mirror",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+    ],
+  ),
+  (
+    entity: 1,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.0, 1.0, 0.0),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, -0.65142053, 0.0, -0.7587181),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.3823346, 1.3823346, 1.3823346),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.0, 1.0, 0.0),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, -0.65142053, 0.0, -0.7587181),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.3823346, 1.3823346, 1.3823346),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "ring",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+    ],
+  ),
+  (
+    entity: 2,
+    components: [
+      {
+        "type": "bevy_transform::components::parent::PreviousParent",
+        "tuple_struct": [
+          {
+            "type": "bevy_ecs::entity::Entity",
+            "value": 3,
+          },
+        ],
+      },
+      {
+        "type": "bevy_transform::components::parent::Parent",
+        "tuple_struct": [
+          {
+            "type": "bevy_ecs::entity::Entity",
+            "value": 3,
+          },
+        ],
+      },
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.0, 0.0, 0.4),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.1, 0.1, 0.1),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-5.0971274, 2.5682647, 11.63161),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (-0.035695165, 0.06536128, 0.0023395845, 0.99722034),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.1, 0.1, 0.1),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "smiley_box",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+    ],
+  ),
+  (
+    entity: 3,
+    components: [
+      {
+        "type": "bevy_transform::components::children::Children",
+        "tuple_struct": [
+          {
+            "type": "smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>",
+            "list": [
+              {
+                "type": "bevy_ecs::entity::Entity",
+                "value": 2,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-5.1492043, 2.5396657, 11.236047),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (-0.035695165, 0.06536128, 0.0023395845, 0.99722034),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-5.1492043, 2.5396657, 11.236047),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (-0.035695165, 0.06536128, 0.0023395845, 0.99722034),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::camera::EnvironmentSettings",
+        "struct": {
+          "sun_theta_phi": {
+            "type": "(f32, f32)",
+            "tuple": [
+              {
+                "type": "f32",
+                "value": 89.84,
+              },
+              {
+                "type": "f32",
+                "value": 1.5699987,
+              },
+            ],
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::camera::KajiyaCamera",
+        "struct": {
+          "vertical_fov": {
+            "type": "f32",
+            "value": 52.0,
+          },
+          "near_plane_distance": {
+            "type": "f32",
+            "value": 0.01,
+          },
+          "aspect_ratio": {
+            "type": "f32",
+            "value": 1.7777778,
+          },
+        },
+      },
+    ],
+  ),
+  (
+    entity: 4,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.0, 0.0, 0.0),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.0, 0.0, 0.0),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "floor",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+  (
+    entity: 5,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-5.0, -0.001, -12.03569),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-5.0, -0.001, -12.03569),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "ring",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+  (
+    entity: 6,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-5.0, 10.0, -5.0),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-5.0, 10.0, -5.0),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "ring",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+  (
+    entity: 7,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-4.9998894, -0.1614213, 3.5610805),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.01, 0.01, 0.01),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-4.9998894, -0.1614213, 3.5610805),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.01, 0.01, 0.01),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "336_lrm",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 100.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+]

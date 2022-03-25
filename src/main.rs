@@ -3,29 +3,31 @@ use bevy::prelude::*;
 use concord::logger::{console_info, get_console_logs};
 
 use concord::{ConcordPlugins, editor::SelectableTag};
-use bevy_kajiya::{kajiya_render::{KajiyaDescriptor, KajiyaCameraBundle, KajiyaCamera, KajiyaMeshInstanceBundle, KajiyaMeshInstance, KajiyaMesh, EnvironmentSettings}, BevyKajiyaPlugins};
+use bevy_kajiya::{kajiya_render::{KajiyaDescriptor, KajiyaCameraBundle, KajiyaCamera, KajiyaMeshInstanceBundle, KajiyaMeshInstance, EnvironmentSettings}, BevyKajiyaPlugins};
 use dolly::prelude::{CameraRig, Position, Smooth, YawPitch};
 
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
             title: "Concord Prototype".to_string(),
-            width: 1920.,
-            height: 1080.,
+            width: 1920. / 1.,
+            height: 1080. / 1.,
             vsync: false,
             resizable: false,
             mode: WindowMode::Windowed,
+            scale_factor_override: Some(1.5),
             ..Default::default()
         })
         .insert_resource(KajiyaDescriptor {
-            scene_name: "car".to_string(),
+            scene_name: "main".to_string(),
             gi_volume_scale: 2.0,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
         .add_plugins(BevyKajiyaPlugins)
         .add_plugins(ConcordPlugins)
-        .add_startup_system(setup_world)
+        .add_startup_system(setup_camera_rig)
+        // .add_startup_system(setup_world)
         .add_system(sun_move)
         .add_system(rotator_system)
         .add_system(drive_camera)
@@ -36,29 +38,9 @@ fn main() {
 #[derive(Component, Copy, Clone)]
 struct BodyTag;
 
-fn setup_world(mut commands: Commands, windows: Res<Windows>) {
+// TODO: Added<CameraRig> to fetch loaded cam's trans first and apply to rig cam
+fn setup_camera_rig(mut commands: Commands) {
     
-    // Spawn an entity to control the kajiya renderer camera.  Only 1 camera is allowed at the moment.
-    // The cameara bundle also provides the EnvironmentSettings components to give the user access to
-    // the sun state.
-    let window = windows.get_primary().unwrap();
-    commands.spawn_bundle(KajiyaCameraBundle {
-        camera: KajiyaCamera {
-            aspect_ratio: window.requested_width() / window.requested_height(),
-            ..Default::default()
-        },
-        ..Default::default()
-    }).with_children(|parent| {
-        parent.spawn_bundle(KajiyaMeshInstanceBundle {
-            mesh_instance: KajiyaMeshInstance { 
-                mesh: KajiyaMesh::Name("smiley_box".to_string()),
-                ..Default::default()
-            },
-            transform: Transform::from_translation(Vec3::new(0.0,0.0,0.4)).with_scale(Vec3::splat(0.1)),
-            ..Default::default()
-        }).insert(BodyTag);
-    });
-
     // Not required, just a nice camera driver to give easy, smooth, camera controls.
     let camera_rig = CameraRig::builder()
         .with(Position::new(dolly::glam::Vec3::new(0.0, 2.5, 10.0)))
@@ -68,10 +50,35 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
 
     commands.insert_resource(camera_rig);
 
+}
+
+fn setup_world(mut commands: Commands, windows: Res<Windows>) {
+
+    // Spawn an entity to control the kajiya renderer camera.  Only 1 camera is allowed at the moment.
+    // The cameara bundle also provides the EnvironmentSettings components to give the user access to
+    // the sun state.
+    let window = windows.get_primary().unwrap();
+    commands.spawn_bundle(KajiyaCameraBundle {
+        camera: KajiyaCamera {
+            aspect_ratio: window.requested_width() / window.requested_height(),
+            ..KajiyaCamera::default()
+        },
+        ..Default::default()
+    }).with_children(|parent| {
+        parent.spawn_bundle(KajiyaMeshInstanceBundle {
+            mesh_instance: KajiyaMeshInstance { 
+                mesh: "smiley_box".to_string(),
+                ..Default::default()
+            },
+            transform: Transform::from_translation(Vec3::new(0.0,0.0,0.4)).with_scale(Vec3::splat(0.1)),
+            ..Default::default()
+        }).insert(BodyTag);
+    });
+
     // Spawn a new "user" mesh instance with the "ring" mesh
     commands.spawn_bundle(KajiyaMeshInstanceBundle {
         mesh_instance: KajiyaMeshInstance { 
-            mesh: KajiyaMesh::Name("ring".to_string()),
+            mesh: "ring".to_string(),
             ..Default::default()
         },
         transform: Transform::from_translation(Vec3::new(0.0, 1.0, 0.0)),
@@ -82,7 +89,7 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
     
     commands.spawn_bundle(KajiyaMeshInstanceBundle {
         mesh_instance: KajiyaMeshInstance { 
-            mesh: KajiyaMesh::Name("ring".to_string()),
+            mesh: "ring".to_string(),
             ..Default::default()
         },
         transform: Transform::from_translation(Vec3::new(-5.0, -0.001, -5.0)),
@@ -91,7 +98,7 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
 
     commands.spawn_bundle(KajiyaMeshInstanceBundle {
         mesh_instance: KajiyaMeshInstance { 
-            mesh: KajiyaMesh::Name("336_lrm".to_string()),
+            mesh: "336_lrm".to_string(),
             selection_bb_size: 100.0,
             ..Default::default()
         },
@@ -101,7 +108,7 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
 
     commands.spawn_bundle(KajiyaMeshInstanceBundle {
         mesh_instance: KajiyaMeshInstance { 
-            mesh: KajiyaMesh::Name("ring".to_string()),
+            mesh: "ring".to_string(),
             ..Default::default()
         },
         transform: Transform::from_translation(Vec3::new(-5.0, 10., -5.0)),
@@ -110,39 +117,28 @@ fn setup_world(mut commands: Commands, windows: Res<Windows>) {
 
     commands.spawn_bundle(KajiyaMeshInstanceBundle {
         mesh_instance: KajiyaMeshInstance { 
-            mesh: KajiyaMesh::Name("mirror".to_string()),
+            mesh: "mirror".to_string(),
             ..Default::default()
         },
         transform: Transform::from_translation(Vec3::new(20.0, 0.0, 0.0)),
         ..Default::default()
     });
 
-    // commands.spawn_bundle(KajiyaMeshInstanceBundle {
-    //     mesh_instance: KajiyaMeshInstance { 
-    //         mesh: KajiyaMesh::Name("dirt".to_string()),
-    //         ..Default::default()
-    //     },
-    //     transform: Transform::from_translation(Vec3::new(0.0, 10.0, 0.0)),
-    //     ..Default::default()
-    // });
-
-    // commands.spawn_bundle(KajiyaMeshInstanceBundle {
-    //     mesh_instance: KajiyaMeshInstance { 
-    //         mesh: KajiyaMesh::Name("cube".to_string()),
-    //         ..Default::default()
-    //     },
-    //     transform: Transform::from_translation(Vec3::new(0.0, 10.5, 0.0)),
-    //     ..Default::default()
-    // }).insert(SelectableTag);
 }
 
 fn sun_move(time: Res<Time>, mut query: Query<&mut EnvironmentSettings, With<KajiyaCamera>>, mut mouse_motion_events: EventReader<MouseMotion>,
     mouse_buttons: Res<Input<MouseButton>>,
+    keys: Res<Input<KeyCode>>,
 ) {
-    let mut env = query.iter_mut().next().unwrap();
+    let mut env = if let Some(mut env) = query.iter_mut().next() {
+        env
+    } else {
+        return;
+    };
+
     let mut mouse_delta = Vec2::ZERO;
     let mouse_sensitivity = 0.005;
-    if mouse_buttons.pressed(MouseButton::Middle) {
+    if mouse_buttons.pressed(MouseButton::Middle) || (keys.pressed(KeyCode::LControl) && mouse_buttons.pressed(MouseButton::Right)) {
         for event in mouse_motion_events.iter() {
             mouse_delta += event.delta;
         }
@@ -184,6 +180,13 @@ fn drive_camera(
     mut camera_rig: ResMut<CameraRig>,
     mut query: Query<&mut Transform, With<KajiyaCamera>>,
 ) {
+    
+    let mut camera_transform = if let Some(camera_transform) = query.iter_mut().next() {
+        camera_transform
+    } else {
+        return;
+    };
+
     let time_delta_seconds: f32 = time.delta_seconds();
 
     let mut move_vec = Vec3::ZERO;
@@ -235,7 +238,6 @@ fn drive_camera(
 
     camera_rig.update(time_delta_seconds);
 
-    let mut camera_transform = query.iter_mut().next().unwrap();
     camera_transform.translation = camera_rig.final_transform.position;
     camera_transform.rotation = camera_rig.final_transform.rotation;
 }

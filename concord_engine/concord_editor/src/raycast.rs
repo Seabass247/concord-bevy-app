@@ -2,7 +2,7 @@ use std::ops::Sub;
 
 use bevy::{math::{Vec3A, Vec4Swizzles}, prelude::*};
 
-use bevy_kajiya::kajiya_render::{mesh::Aabb, KajiyaMeshInstance, KajiyaMeshInstanceBundle, KajiyaMesh};
+use bevy_kajiya::kajiya_render::{mesh::Aabb, KajiyaMeshInstance, KajiyaMeshInstanceBundle};
 use concord_logger::console_info;
 use egui_gizmo::{math};
 
@@ -34,7 +34,8 @@ impl Default for RayCast {
     }
 }
 
-#[derive(Component, Copy, Clone)]
+#[derive(Component, Copy, Clone, Default, Reflect)]
+#[reflect(Component)]
 pub struct SelectableTag;
 
 impl RayCast {
@@ -136,12 +137,13 @@ pub fn pointer_ray(
     let window = windows.get_primary().unwrap();
 
     if let Some(cursor) = evr_cursor.iter().next() {
-        let hover = Vec2::new(cursor.position.x, window.physical_height() as f32 - cursor.position.y);
-        editor.pointer = hover;
-        // println!("concord pointer {:?}", hover);
+        let scale_factor = window.scale_factor() as f32;
 
-        let x = ((hover.x) / window.physical_width() as f32) * 2.0 - 1.0;
-        let y = ((hover.y) / window.physical_height() as f32) * 2.0 - 1.0;
+        let hover = Vec2::new(cursor.position.x, window.physical_height() as f32 / scale_factor - cursor.position.y);
+        editor.pointer = hover;
+
+        let x = ((hover.x) / window.physical_width() as f32 * scale_factor) * 2.0 - 1.0;
+        let y = ((hover.y) / window.physical_height() as f32 * scale_factor) * 2.0 - 1.0;
         
         let projection_matrix = Mat4::from_cols_array_2d(&editor.transform_gizmo.projection_matrix.into());
         let view_matrix = Mat4::from_cols_array_2d(&editor.transform_gizmo.view_matrix.into());

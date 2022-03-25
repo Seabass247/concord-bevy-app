@@ -11,6 +11,7 @@ mod target;
 use crate::target::Target;
 
 pub mod plugin;
+pub mod scene;
 
 pub use plugin::*;
 pub use raycast::SelectableTag;

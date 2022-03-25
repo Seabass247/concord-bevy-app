@@ -1,5 +1,5 @@
 use bevy::{prelude::*};
-use bevy_kajiya::kajiya_render::{KajiyaMeshInstance, KajiyaMeshInstanceBundle, KajiyaMesh};
+use bevy_kajiya::kajiya_render::{KajiyaMeshInstance, KajiyaMeshInstanceBundle};
 use concord_logger::console_info;
 
 use crate::{EditorState, NewInstanceSelect, SelectableTag};
@@ -119,7 +119,7 @@ pub fn instance_new_target(
         if let NewInstanceSelect::MeshName(name) = &editor.new_instance_select {
             commands.spawn_bundle(KajiyaMeshInstanceBundle {
                 mesh_instance: KajiyaMeshInstance {
-                    mesh: KajiyaMesh::Name(name.to_owned()),
+                    mesh: name.to_owned(),
                     ..Default::default()
                 },
                 transform: Transform::from_translation(editor.transform_gizmo.last_translation),
