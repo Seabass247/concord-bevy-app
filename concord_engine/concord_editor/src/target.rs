@@ -58,9 +58,8 @@ pub fn unset_entity_target(commands: &mut Commands, editor: &mut EditorState) {
             .entity(target.entity.unwrap())
             .remove::<TargetTag>();
         editor.selected_target = None;
+        console_info!("Deselected instance");
     }
-
-    console_info!("Deselected instance");
 }
 
 pub fn update_target(
@@ -70,8 +69,10 @@ pub fn update_target(
 ) {
     // Don't need to update/move target from gizmo when instancing mode is enabled
     if editor.new_instancing_enabled {
+        // Make sure the old target instance is not selected before leaving "spawn new instance" mode
+        unset_entity_target(&mut commands, &mut editor);
         return;
-    }
+    } 
 
     // Handle picked target event from the raycast if there is one
     if let Some(target) = editor.picked_target.take() {
@@ -108,13 +109,13 @@ pub fn update_target(
 pub fn instance_new_target(
     buttons: Res<Input<MouseButton>>,
     keys: Res<Input<KeyCode>>,
-    mut editor: ResMut<EditorState>,
+    editor: ResMut<EditorState>,
     mut commands: Commands,
 ) {
     // Can only be instanced if flag is enabled and is triggered by pressing LShift+LClick
     if editor.new_instancing_enabled &&
     buttons.just_pressed(MouseButton::Left) &&
-    keys.pressed(KeyCode::LShift) {
+    keys.pressed(KeyCode::LControl) {
         if let NewInstanceSelect::MeshName(name) = &editor.new_instance_select {
             commands.spawn_bundle(KajiyaMeshInstanceBundle {
                 mesh_instance: KajiyaMeshInstance {
@@ -124,9 +125,7 @@ pub fn instance_new_target(
                 transform: Transform::from_translation(editor.transform_gizmo.last_translation),
                 ..Default::default()
             }).insert(SelectableTag);
-            
-            // Make sure the old target instance is not selected when leaving "spawn new instance" mode
-            unset_entity_target(&mut commands, &mut editor);
+
             
             console_info!("Spawned mesh instance at {}", editor.transform_gizmo.last_translation);
         }

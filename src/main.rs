@@ -19,6 +19,7 @@ fn main() {
         })
         .insert_resource(KajiyaDescriptor {
             scene_name: "car".to_string(),
+            gi_volume_scale: 2.0,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)

@@ -1,6 +1,6 @@
 use std::fmt;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, utils::HashSet};
 use bevy_kajiya::kajiya_egui::egui::Color32;
 use egui_gizmo::{Gizmo, GizmoMode, GizmoOrientation, GizmoResult, GizmoVisuals};
 use raycast::RayCast;
@@ -156,7 +156,7 @@ impl TransformGizmo {
 pub struct EditorState {
     pub selected_target: Option<Target>,
     pub picked_target: Option<(Target)>,
-    pub meshes_list: Vec<String>,
+    pub meshes_list: HashSet<String>,
     pub new_instance_select: NewInstanceSelect,
     pub new_instance_scale: f32,
     pub new_instancing_enabled: bool,

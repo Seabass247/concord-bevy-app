@@ -45,8 +45,12 @@ impl Plugin for ConcordEditorPlugin {
 
 pub fn process_input(mut editor: ResMut<EditorState>, keys: Res<Input<KeyCode>>) {
 
-    if keys.just_pressed(KeyCode::Tab) {
+    if keys.pressed(KeyCode::LControl) && keys.just_pressed(KeyCode::E){
         editor.hide_gui = !editor.hide_gui;
+    }
+
+    if keys.just_pressed(KeyCode::Tab) {
+        editor.new_instancing_enabled = !editor.new_instancing_enabled;
     }
 
     if keys.just_pressed(KeyCode::T) {
@@ -59,12 +63,17 @@ pub fn process_input(mut editor: ResMut<EditorState>, keys: Res<Input<KeyCode>>)
 }
 
 pub fn setup_gui(mut editor: ResMut<EditorState>) {
+    get_dir_mesh_list(&mut editor);
+    editor.new_instance_scale = 1.0;
+}
+
+fn get_dir_mesh_list(editor: &mut EditorState) {
     let paths = fs::read_dir("assets/meshes/").unwrap();
 
     for path in paths {
         let mut mesh_name = path.unwrap().path().display().to_string();
         mesh_name = mesh_name.replace("assets/meshes/", "");
-        editor.meshes_list.push(mesh_name);
+        editor.meshes_list.insert(mesh_name);
     }
 
     editor.new_instance_scale = 1.0;
@@ -125,6 +134,10 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
             );
 
             ui.separator();
+
+            if ui.button("Refresh mesh list").clicked() {
+                get_dir_mesh_list(&mut editor);
+            }
 
             ui.checkbox(&mut editor.new_instancing_enabled, "Spawn New Instance");
             egui::ComboBox::from_id_source("new_instance_combo_box")
