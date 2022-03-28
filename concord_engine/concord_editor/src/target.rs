@@ -49,7 +49,7 @@ fn set_entity_target(
 ) {
     commands.entity(entity).insert(TargetTag);
     editor.selected_target = Some(new_target);
-    console_info!("Selected new instance");
+    console_info!("Selected instance");
 }
 
 pub fn unset_entity_target(commands: &mut Commands, editor: &mut EditorState) {
@@ -90,7 +90,7 @@ pub fn update_target(
     }
 
     // Only perform target query if there is a target selected
-    let target = if let Some(target) = editor.selected_target {
+    let mut target = if let Some(target) = editor.selected_target.take() {
         target
     } else {
         return;
@@ -102,20 +102,21 @@ pub fn update_target(
         transform.rotation = editor.transform_gizmo.last_rotation;
         transform.scale = editor.transform_gizmo.last_scale;
         mesh.emission = editor.selected_emission;
-    }
 
+        // Update the target's metadata 
+        target.origin = transform.translation;
+        target.orientation = transform.rotation;
+        target.scale = transform.scale;
+    }
+    
+    editor.selected_target = Some(target);
 }
 
 pub fn instance_new_target(
-    buttons: Res<Input<MouseButton>>,
-    keys: Res<Input<KeyCode>>,
-    editor: ResMut<EditorState>,
-    mut commands: Commands,
+    commands: &mut Commands,
+    mut editor: &mut EditorState,
 ) {
-    // Can only be instanced if flag is enabled and is triggered by pressing LShift+LClick
-    if editor.new_instancing_enabled &&
-    buttons.just_pressed(MouseButton::Left) &&
-    keys.pressed(KeyCode::LControl) {
+    if editor.new_instancing_enabled {
         if let NewInstanceSelect::MeshName(name) = &editor.new_instance_select {
             commands.spawn_bundle(KajiyaMeshInstanceBundle {
                 mesh_instance: KajiyaMeshInstance {
@@ -130,5 +131,22 @@ pub fn instance_new_target(
             console_info!("Spawned mesh instance at {}", editor.transform_gizmo.last_translation);
         }
         return;
+    }
+}
+
+
+pub fn delete_target_instance(
+    mut commands: &mut Commands,
+    mut editor: &mut EditorState,
+) {
+    if let Some(target) = editor.selected_target {
+        let entity_id = commands
+            .entity(target.entity.unwrap()).id();
+
+        unset_entity_target(&mut commands, &mut editor);
+
+        commands.entity(entity_id).despawn();
+
+        console_info!("Deleted instance");
     }
 }

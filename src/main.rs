@@ -15,12 +15,12 @@ fn main() {
             vsync: false,
             resizable: false,
             mode: WindowMode::Windowed,
-            scale_factor_override: Some(1.5),
+            scale_factor_override: Some(1.2),
             ..Default::default()
         })
         .insert_resource(KajiyaDescriptor {
             scene_name: "main".to_string(),
-            gi_volume_scale: 2.0,
+            gi_volume_scale: 6.0,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)

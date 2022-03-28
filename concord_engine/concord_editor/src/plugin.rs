@@ -2,8 +2,8 @@ use std::fs;
 
 use crate::{
     raycast::{pick_meshes, RayCast, pointer_ray},
-    target::{update_target, TargetTag, instance_new_target},
-    EditorState, NewInstanceSelect, scene::{save_scene_system, load_scene_system}, SelectableTag,
+    target::{update_target, TargetTag, instance_new_target, delete_target_instance},
+    EditorState, NewInstanceSelect, scene::{save_scene_system, load_scene_system, SceneCommand}, SelectableTag,
 };
 use bevy::prelude::*;
 use bevy_kajiya::{
@@ -28,7 +28,6 @@ impl Plugin for ConcordEditorPlugin {
         app.add_startup_system(setup_gui);
         app.add_system(process_input);
         app.add_system(update_target);
-        app.add_system(instance_new_target);
         app.add_system(pick_meshes);
         app.add_system(pointer_ray);
         app.add_system(save_scene_system);
@@ -52,7 +51,7 @@ impl Plugin for ConcordEditorPlugin {
     }
 }
 
-pub fn process_input(mut editor: ResMut<EditorState>, keys: Res<Input<KeyCode>>) {
+pub fn process_input(mut commands: Commands, mut editor: ResMut<EditorState>, keys: Res<Input<KeyCode>>) {
 
     if keys.pressed(KeyCode::LControl) && keys.just_pressed(KeyCode::E){
         editor.hide_gui = !editor.hide_gui;
@@ -68,6 +67,10 @@ pub fn process_input(mut editor: ResMut<EditorState>, keys: Res<Input<KeyCode>>)
             GizmoMode::Translate => GizmoMode::Rotate,
             GizmoMode::Scale => GizmoMode::Translate,
         }
+    }
+
+    if keys.just_pressed(KeyCode::Delete) {
+        delete_target_instance(&mut commands, &mut editor);
     }
 }
 
@@ -88,7 +91,9 @@ fn get_dir_mesh_list(editor: &mut EditorState) {
     editor.new_instance_scale = 1.0;
 }
 
-pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>) {
+pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>,
+    mut commands: Commands,
+) {
     if editor.hide_gui {
         return;
     }
@@ -101,7 +106,7 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
 
             ui.separator();
 
-            ui.label("Transform Tool");
+            ui.heading("Transform Tool");
             egui::ComboBox::from_id_source("transform_mode_combo_box")
                 .selected_text(format!("{:?}", editor.transform_gizmo.mode))
                 .show_ui(ui, |ui| {
@@ -125,8 +130,6 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
 
             ui.checkbox(&mut editor.transform_gizmo.snapping_off, "Disable Tool Snapping");
             
-            ui.separator();
-            
             ui.label("Snapping distance");
             ui.add(
                 Slider::new(&mut editor.transform_gizmo.snap_distance, (0.0)..=(1.0))
@@ -144,23 +147,32 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
 
             ui.separator();
 
+            ui.heading("Create New Instance");
+
+            ui.checkbox(&mut editor.new_instancing_enabled, "Enable");
+            
+            ui.horizontal(|ui| {
+                egui::ComboBox::from_id_source("new_instance_combo_box")
+                .selected_text(format!("{}", editor.new_instance_select))
+                .show_ui(ui, |ui| {
+                        for mesh in editor.meshes_list.clone() {
+                            ui.selectable_value(
+                                &mut editor.new_instance_select,
+                                NewInstanceSelect::MeshName(mesh.clone()),
+                                mesh,
+                            );
+                        }
+                });
+                if ui.add_enabled(editor.new_instancing_enabled, 
+                egui::Button::new("Spawn")).clicked() {
+                    instance_new_target(&mut commands, &mut editor);
+                }
+            });
+
             if ui.button("Refresh mesh list").clicked() {
                 get_dir_mesh_list(&mut editor);
             }
 
-            ui.checkbox(&mut editor.new_instancing_enabled, "Spawn New Instance");
-            egui::ComboBox::from_id_source("new_instance_combo_box")
-                .selected_text(format!("{}", editor.new_instance_select))
-                .show_ui(ui, |ui| {
-                    for mesh in editor.meshes_list.clone() {
-                        ui.selectable_value(
-                            &mut editor.new_instance_select,
-                            NewInstanceSelect::MeshName(mesh.clone()),
-                            mesh,
-                        );
-                    }
-                    // ui.selectable_value(&mut editor.transform_gizmo.mode, GizmoMode::Scale, "Scale");
-                });
             ui.label("Instanced scale");
             ui.add(
                 Slider::new(&mut editor.new_instance_scale, (0.0)..=(1.0))
@@ -170,7 +182,7 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
 
             ui.separator();
 
-            ui.label("Selected Instance");
+            ui.heading("Selected Instance");
 
             ui.horizontal(|ui| {
                 ui.label("Emission");
@@ -184,9 +196,11 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
 
             let mut translation_str = "".to_string();
             let mut rotation_str = "".to_string();
+            let mut scale_str = "".to_string();
             if let Some(target) = editor.selected_target {
                 translation_str = format!("{:?}", target.origin);
                 rotation_str = format!("{:?}", target.orientation);
+                scale_str = format!("{:?}", target.scale);
             }
             ui.horizontal(|ui| {
                 ui.add(egui::TextEdit::singleline(&mut translation_str).interactive(false));
@@ -196,7 +210,23 @@ pub fn process_gui(egui: Res<bevy_kajiya::Egui>, mut editor: ResMut<EditorState>
                 ui.add(egui::TextEdit::singleline(&mut rotation_str).interactive(false));
                 ui.label("Rotation");
             });
+            ui.horizontal(|ui| {
+                ui.add(egui::TextEdit::singleline(&mut scale_str).interactive(false));
+                ui.label("Scale");
+            });
 
+            if ui.add_enabled(editor.selected_target.is_some(), 
+            egui::Button::new("Delete Instance")).clicked() {
+                delete_target_instance(&mut commands, &mut editor);
+            }
+
+            ui.separator();
+
+            ui.heading("Scene");
+
+            if ui.button("Save Scene").clicked() {
+                commands.add(SceneCommand::SaveScene("main".to_string()));
+            }
         });
 
     egui::TopBottomPanel::bottom("bottom_panel")

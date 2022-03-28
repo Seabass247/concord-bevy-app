@@ -154,11 +154,11 @@
         "struct": {
           "translation": {
             "type": "glam::vec3::Vec3",
-            "value": (-5.0971274, 2.5682647, 11.63161),
+            "value": (-11.155142, 3.5975368, 13.266297),
           },
           "rotation": {
             "type": "glam::quat::Quat",
-            "value": (-0.035695165, 0.06536128, 0.0023395845, 0.99722034),
+            "value": (-0.04571363, -0.24165337, -0.011397701, 0.96921825),
           },
           "scale": {
             "type": "glam::vec3::Vec3",
@@ -207,11 +207,11 @@
         "struct": {
           "translation": {
             "type": "glam::vec3::Vec3",
-            "value": (-5.1492043, 2.5396657, 11.236047),
+            "value": (-10.968186, 3.5598881, 12.914686),
           },
           "rotation": {
             "type": "glam::quat::Quat",
-            "value": (-0.035695165, 0.06536128, 0.0023395845, 0.99722034),
+            "value": (-0.04571363, -0.24165337, -0.011397701, 0.96921825),
           },
           "scale": {
             "type": "glam::vec3::Vec3",
@@ -224,11 +224,11 @@
         "struct": {
           "translation": {
             "type": "glam::vec3::Vec3",
-            "value": (-5.1492043, 2.5396657, 11.236047),
+            "value": (-10.968186, 3.5598881, 12.914686),
           },
           "rotation": {
             "type": "glam::quat::Quat",
-            "value": (-0.035695165, 0.06536128, 0.0023395845, 0.99722034),
+            "value": (-0.04571363, -0.24165337, -0.011397701, 0.96921825),
           },
           "scale": {
             "type": "glam::vec3::Vec3",
@@ -244,11 +244,11 @@
             "tuple": [
               {
                 "type": "f32",
-                "value": 89.84,
+                "value": 89.16007,
               },
               {
                 "type": "f32",
-                "value": 1.5699987,
+                "value": 1.5449984,
               },
             ],
           },
@@ -281,7 +281,7 @@
         "struct": {
           "translation": {
             "type": "glam::vec3::Vec3",
-            "value": (0.0, 0.0, 0.0),
+            "value": (-0.021435738, 1.9075437, -0.40251696),
           },
           "rotation": {
             "type": "glam::quat::Quat",
@@ -298,7 +298,7 @@
         "struct": {
           "translation": {
             "type": "glam::vec3::Vec3",
-            "value": (0.0, 0.0, 0.0),
+            "value": (-0.021435738, 1.9075437, -0.40251696),
           },
           "rotation": {
             "type": "glam::quat::Quat",
@@ -319,7 +319,7 @@
           },
           "emission": {
             "type": "f32",
-            "value": 1.0,
+            "value": 10.0,
           },
           "selection_bb_size": {
             "type": "f32",
@@ -379,7 +379,7 @@
           },
           "emission": {
             "type": "f32",
-            "value": 1.0,
+            "value": 0.0,
           },
           "selection_bb_size": {
             "type": "f32",
@@ -454,22 +454,22 @@
     ],
   ),
   (
-    entity: 7,
+    entity: 12,
     components: [
       {
         "type": "bevy_transform::components::transform::Transform",
         "struct": {
           "translation": {
             "type": "glam::vec3::Vec3",
-            "value": (-4.9998894, -0.1614213, 3.5610805),
+            "value": (-2.0507092, 1.4311895, -33.939686),
           },
           "rotation": {
             "type": "glam::quat::Quat",
-            "value": (0.0, 0.0, 0.0, 1.0),
+            "value": (0.0, 1.0, 0.0, -0.00000004371139),
           },
           "scale": {
             "type": "glam::vec3::Vec3",
-            "value": (0.01, 0.01, 0.01),
+            "value": (1.0, 1.0, 1.0),
           },
         },
       },
@@ -478,7 +478,50 @@
         "struct": {
           "translation": {
             "type": "glam::vec3::Vec3",
-            "value": (-4.9998894, -0.1614213, 3.5610805),
+            "value": (-2.0507092, 1.4311895, -33.939686),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 1.0, 0.0, -0.00000004371139),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "mark_vi",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 95.6,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+  (
+    entity: 8,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-2.0365784, 1.4768186, -8.056154),
           },
           "rotation": {
             "type": "glam::quat::Quat",
@@ -486,7 +529,264 @@
           },
           "scale": {
             "type": "glam::vec3::Vec3",
-            "value": (0.01, 0.01, 0.01),
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-2.0365784, 1.4768186, -8.056154),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "mark_vi_car",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+  (
+    entity: 9,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-2.1142483, 1.4762659, 1.2726889),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-2.1142483, 1.4762659, 1.2726889),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "mark_vi",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 100.3,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+  (
+    entity: 10,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-2.0507092, 1.4311895, -16.394852),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-2.0507092, 1.4311895, -16.394852),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "mark_vi_car",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+  (
+    entity: 11,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-2.0507092, 1.4311895, -24.710482),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (-2.0507092, 1.4311895, -24.710482),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (1.0, 1.0, 1.0),
+          },
+        },
+      },
+      {
+        "type": "bevy_kajiya_render::mesh::KajiyaMeshInstance",
+        "struct": {
+          "mesh": {
+            "type": "alloc::string::String",
+            "value": "mark_vi_car",
+          },
+          "emission": {
+            "type": "f32",
+            "value": 1.0,
+          },
+          "selection_bb_size": {
+            "type": "f32",
+            "value": 1.0,
+          },
+        },
+      },
+      {
+        "type": "concord_editor::raycast::SelectableTag",
+        "struct": {},
+      },
+    ],
+  ),
+  (
+    entity: 7,
+    components: [
+      {
+        "type": "bevy_transform::components::transform::Transform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (3.418416, 1.5090135, -1.1273937),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.018754672, 0.018754672, 0.018754672),
+          },
+        },
+      },
+      {
+        "type": "bevy_transform::components::global_transform::GlobalTransform",
+        "struct": {
+          "translation": {
+            "type": "glam::vec3::Vec3",
+            "value": (3.418416, 1.5090135, -1.1273937),
+          },
+          "rotation": {
+            "type": "glam::quat::Quat",
+            "value": (0.0, 0.0, 0.0, 1.0),
+          },
+          "scale": {
+            "type": "glam::vec3::Vec3",
+            "value": (0.018754672, 0.018754672, 0.018754672),
           },
         },
       },

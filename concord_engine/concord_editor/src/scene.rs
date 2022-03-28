@@ -4,7 +4,7 @@ use bevy::{prelude::*, reflect::TypeRegistry, ecs::system::Command};
 use bevy_kajiya::kajiya_render::KajiyaDescriptor;
 use concord_logger::console_info;
 
-enum SceneCommand {
+pub enum SceneCommand {
     SaveScene(String),
 }
   
