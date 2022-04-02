@@ -15,8 +15,7 @@ This bevy app uses the most advanced Rust renderer open-sourced yet, as of writi
 - [x] Editor gui
 - [x] Transform edit tools
 - [x] In-game debugging/info console
-- [ ] Scene persistence via saving/loading and standardized file format
-- [ ] Hot mesh asset reloading
+- [x] Scene persistence via saving/loading and standardized file format
 - [ ] Netorking
 - [ ] Scripting
 
