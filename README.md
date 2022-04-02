@@ -19,7 +19,7 @@ This bevy app uses the most advanced Rust renderer open-sourced yet, as of writi
 - [ ] Netorking
 - [ ] Scripting
 
-![alt text](https://github.com/Seabass247/bevy-kajiya-playground/blob/main/screenshot.png)
+![alt text](https://github.com/Seabass247/concord-bevy-app/blob/main/screenshot.png)
 
 ## Usage
 
