@@ -10,12 +10,12 @@ fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
             title: "Concord Prototype".to_string(),
-            width: 1920. / 1.,
-            height: 1080. / 1.,
+            width: 1920. / 1.5,
+            height: 1080. / 1.5,
             vsync: false,
             resizable: false,
             mode: WindowMode::Windowed,
-            scale_factor_override: Some(1.2),
+            scale_factor_override: Some(1.5),
             ..Default::default()
         })
         .insert_resource(KajiyaDescriptor {
